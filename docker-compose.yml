@@ -1,0 +1,35 @@
+services:
+  db:
+    image: postgres:17
+    container_name: smartservice_db
+    restart: "no"
+    env_file:
+      - .env
+    ports:
+      - "5435:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    deploy:
+      resources:
+        limits:
+          memory: 1g
+
+  app:
+    build: .
+    container_name: smartservice_app
+    restart: "no"
+    depends_on:
+      - db
+    env_file:
+      - .env
+    ports:
+      - "8081:8081"
+    deploy:
+      resources:
+        limits:
+          memory: 1g
+    environment:
+      - JAVA_TOOL_OPTIONS=-Xms256m -Xmx512m
+
+volumes:
+  db_data:
