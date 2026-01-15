@@ -96,7 +96,7 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
 
         // 1️⃣ Allow requests only from your frontend
-        configuration.setAllowedOrigins(List.of("http://localhost:8081")); // change to your frontend URL
+        configuration.setAllowedOrigins(List.of("http://localhost:3000")); // change to your frontend URL
 
         // 2️⃣ Allow HTTP methods used by your API
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
