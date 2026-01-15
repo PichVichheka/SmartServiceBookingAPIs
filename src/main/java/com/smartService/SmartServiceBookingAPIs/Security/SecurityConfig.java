@@ -51,13 +51,14 @@ public class SecurityConfig {
                         .requestMatchers("/auth/**").permitAll()
 
                         // Admin-only endpoints
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/admin/**").hasRole("admin")
 
                         // User and Admin endpoints
-                        .requestMatchers("/users/**").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/users/**").hasRole("admin")
 
                         // Any other request requires authentication
-                        .anyRequest().authenticated()
+                                .anyRequest().permitAll()
+//                        .anyRequest().authenticated()
                 );
 
         return http.build();
