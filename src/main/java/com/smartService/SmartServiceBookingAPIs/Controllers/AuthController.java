@@ -1,6 +1,8 @@
 package com.smartService.SmartServiceBookingAPIs.Controllers;
 
+import com.smartService.SmartServiceBookingAPIs.DTO.request.AuthRequest;
 import com.smartService.SmartServiceBookingAPIs.DTO.request.RegisterRequest;
+import com.smartService.SmartServiceBookingAPIs.DTO.response.AuthResponse;
 import com.smartService.SmartServiceBookingAPIs.DTO.response.RegisterResponse;
 import com.smartService.SmartServiceBookingAPIs.Services.AuthService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -29,5 +31,16 @@ public class AuthController {
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(registerResponse);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<@NonNull AuthResponse> login(
+            @RequestBody AuthRequest request,
+            HttpServletResponse response
+            ) {
+        AuthResponse authResponse =
+                authService.login(request, response);
+
+        return ResponseEntity.ok(authResponse);
     }
 }

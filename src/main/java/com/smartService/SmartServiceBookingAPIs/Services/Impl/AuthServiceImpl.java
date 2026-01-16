@@ -24,6 +24,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import static com.smartService.SmartServiceBookingAPIs.Exception.ErrorsExceptionFactory.notFound;
+import static com.smartService.SmartServiceBookingAPIs.Exception.ErrorsExceptionFactory.validation;
 
 @Service
 @AllArgsConstructor
@@ -83,6 +84,40 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public AuthResponse login(AuthRequest request, HttpServletResponse response) {
-        return null;
+        Users user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> validation("Email is incorrect. Please try again."));
+
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw validation("Password is incorrect. Please try again.");
+        }
+
+        List<String> roles = user.getRoles()
+                .stream()
+                .map(Roles::getName)
+                .toList();
+
+        String accessToken = jwtService.generateAccessToken(
+                user.getId().toString(),
+                user.getEmail(),
+                user.getUsername(),
+                roles
+        );
+
+        String refreshToken = jwtService.generateRefreshToken(
+                user.getId().toString(),
+                user.getUsername()
+        );
+
+        cookieHelper.setAuthCookie(response, "access_token", accessToken, 15 * 60);
+        cookieHelper.setAuthCookie(response, "refresh_token", refreshToken, 7 * 24 * 60 * 60);
+
+        UserResponse userResponse = mapperFunction.toUserResponse(user);
+
+        return new AuthResponse(
+                200,
+                "Login successful.",
+                accessToken,
+                userResponse
+        );
     }
 }
