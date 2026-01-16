@@ -17,6 +17,7 @@ public class UserResponse {
     private String fullname;
     private String username;
     private String email;
+    private String phone;
     private List<String> roles;
 
     public UserResponse(Users users) {
@@ -24,6 +25,7 @@ public class UserResponse {
         this.fullname = users.getFullname();
         this.username = users.getUsername();
         this.email = users.getEmail();
+        this.phone = users.getPhone();
         this.roles = users.getRoles()
                 .stream()
                 .map(Roles::getName)

@@ -1,11 +1,10 @@
 package com.smartService.SmartServiceBookingAPIs.Services.Jwt;
 
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
@@ -17,66 +16,73 @@ import java.util.Map;
 @Service
 public class JwtService {
 
-    @Value("${spring.jwt-secret}")
+    @Value("${spring.jwt.secret}")
     private String jwtSecret;
 
-    @Value("${spring.jwt-token-expire}")
-    private long JwtTokenExpired; // milliseconds
+    @Value("${spring.jwt.access-token-expire}")
+    private long accessTokenExpire;
 
-    private SecretKey getSignKey() {
-        return Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
+    @Value("${spring.jwt.refresh-token-expire}")
+    private long refreshTokenExpire;
+
+    private SecretKey signKey;
+
+    @PostConstruct
+    void init() {
+        this.signKey = Keys.hmacShaKeyFor(
+                jwtSecret.getBytes(StandardCharsets.UTF_8)
+        );
     }
 
-    // 🔑 Generate simple token with only userId
-    public String generateToken(
+    // =========================
+    // ACCESS TOKEN
+    // =========================
+    public String generateAccessToken(
             String userId,
             String email,
             String username,
             List<String> roles
     ) {
-
         Map<String, Object> claims = new HashMap<>();
         claims.put("userId", userId);
         claims.put("email", email);
-        claims.put("type", "jwt");
+        claims.put("roles", roles);
+        claims.put("type", "access");
 
-        /*
-         * =========================
-         * 🔐 PROD FEATURE
-         * =========================
-         * Uncomment when you add RBAC (role-based access control)
-         */
-        if (roles != null && !roles.isEmpty()) {
-            claims.put("roles", roles);
-        }
-
-        return buildToken(claims, username, JwtTokenExpired);
+        return buildToken(claims, username, accessTokenExpire);
     }
 
-    // =================
-    // JWT BUILDER
-    // =================
+    // =========================
+    // REFRESH TOKEN
+    // =========================
+    public String generateRefreshToken(
+            String userId,
+            String username
+    ) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("userId", userId);
+        claims.put("type", "refresh");
+
+        return buildToken(claims, username, refreshTokenExpire);
+    }
+
+    // =========================
+    // TOKEN BUILDER
+    // =========================
     private String buildToken(
             Map<String, Object> claims,
             String subject,
             long expiration
     ) {
         Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + expiration);
+        Date expiry = new Date(now.getTime() + expiration);
 
         return Jwts.builder()
                 .claims(claims)
                 .subject(subject)
                 .issuedAt(now)
-                .expiration(expiryDate)
-
-                /*
-                 * =========================
-                 * 🔐 PROD SECURITY
-                 * =========================
-                 * HS512 is good for prod IF secret is long enough
-                 */
-                .signWith(getSignKey(), Jwts.SIG.HS512)
+                .expiration(expiry)
+                .signWith(signKey, Jwts.SIG.HS512)
                 .compact();
     }
 }
