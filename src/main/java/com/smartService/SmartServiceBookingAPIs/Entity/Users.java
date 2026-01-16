@@ -2,16 +2,16 @@ package com.smartService.SmartServiceBookingAPIs.Entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.jspecify.annotations.NullMarked;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.GrantedAuthority;
 
+@NullMarked
 @Entity
 @Table(name = "users")
 @Getter
@@ -25,20 +25,37 @@ public class Users implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "fullname", nullable = false)
+    @Column(nullable = false)
     private String fullname;
 
-    @Column(name = "username", nullable = false)
+    @Column(nullable = false)
     private String username;
 
-    @Column(name = "phone", nullable = false)
+    @Column(nullable = true)
     private String phone;
 
-    @Column(name = "email", nullable = false)
+    @Column(nullable = false)
     private String email;
 
-    @Column(name = "password", nullable = false)
+    @Column(nullable = false)
     private String password;
+
+    // =====================
+    // ENABLED
+    // =====================
+
+    @Column(nullable = false)
+    private boolean enabled = true;
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    // 🔥 REQUIRED FOR MAPSTRUCT
+    public boolean getEnabled() {
+        return enabled;
+    }
 
     // =====================
     // ROLES
@@ -51,52 +68,13 @@ public class Users implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     @Builder.Default
-    @ToString.Exclude
     @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private Set<Roles> roles = new HashSet<>();
 
-
     // =====================
-    // SERVICES (PROVIDER)
+    // AUDIT
     // =====================
-
-    // services.provider_id → users.id
-    @OneToMany(mappedBy = "provider", fetch = FetchType.LAZY)
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    private Set<Services> services = new HashSet<>();
-
-
-    // =====================
-    // PROVIDER AVAILABILITY
-    // =====================
-
-    // provider_availability.provider_id → users.id
-    @OneToMany(mappedBy = "provider", fetch = FetchType.LAZY)
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    private Set<ProviderAvailability> availabilities = new HashSet<>();
-
-
-    // =====================
-    // BOOKINGS
-    // =====================
-
-    // booking.user_id → users.id
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    private Set<Booking> bookingsAsUser = new HashSet<>();
-
-
-    // booking.provider_id → users.id
-    @OneToMany(mappedBy = "provider", fetch = FetchType.LAZY)
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    private Set<Booking> bookingsAsProvider = new HashSet<>();
-
-    @Column(nullable = false)
-    private boolean enabled = true;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -116,33 +94,17 @@ public class Users implements UserDetails {
     }
 
     // =========================
-    // UserDetails Implementation
+    // UserDetails
     // =========================
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles.stream()
-                .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getName()))
+                .map(r -> new SimpleGrantedAuthority("ROLE_" + r.getName()))
                 .collect(Collectors.toSet());
     }
 
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
+    @Override public boolean isAccountNonExpired() { return true; }
+    @Override public boolean isAccountNonLocked() { return true; }
+    @Override public boolean isCredentialsNonExpired() { return true; }
 }
