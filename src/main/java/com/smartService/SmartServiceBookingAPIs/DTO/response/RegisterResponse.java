@@ -8,5 +8,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RegisterResponse {
+    private int statusCode;
+    private String message;
+    private String token;
     private UserResponse user;
 }
+

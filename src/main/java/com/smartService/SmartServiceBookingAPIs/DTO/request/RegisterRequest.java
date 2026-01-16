@@ -1,9 +1,14 @@
 package com.smartService.SmartServiceBookingAPIs.DTO.request;
-import lombok.Data;
+
+import lombok.*;
 
 import java.util.List;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class RegisterRequest {
     private String fullname;
     private String username;
