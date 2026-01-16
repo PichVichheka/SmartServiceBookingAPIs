@@ -1,5 +1,6 @@
 package com.smartService.SmartServiceBookingAPIs.DTO.response;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.smartService.SmartServiceBookingAPIs.Entity.Roles;
 import com.smartService.SmartServiceBookingAPIs.Entity.Users;
 import lombok.AllArgsConstructor;
@@ -9,6 +10,14 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@JsonPropertyOrder({
+        "id",
+        "fullname",
+        "username",
+        "phone",
+        "email",
+        "roles"
+})
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
