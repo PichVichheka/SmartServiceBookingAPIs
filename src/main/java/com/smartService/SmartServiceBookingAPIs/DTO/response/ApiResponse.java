@@ -3,13 +3,15 @@ package com.smartService.SmartServiceBookingAPIs.DTO.response;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+
+import javax.swing.plaf.ActionMapUIResource;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ApiResponse<T> {
 
-    private int status;
+    private Boolean success;
     private String message;
     private T data;
 
@@ -18,8 +20,14 @@ public class ApiResponse<T> {
         this.message = message;
     }
 
-    public ApiResponse(int status, String message) {
-        this.status = status;
+    public ApiResponse(Boolean success, String message) {
+        this.success = success;
         this.message = message;
+    }
+
+    public ApiResponse(Boolean success, String message, T data) {
+        this.success = success;
+        this.message = message;
+        this.data = data;
     }
 }
