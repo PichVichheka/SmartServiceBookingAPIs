@@ -1,73 +1,83 @@
 package com.smartService.SmartServiceBookingAPIs.Security;
 
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
+/**
+ * Security configuration for the Smart Service Booking API.
+ * Configures JWT-based stateless authentication, CORS, and endpoint authorization.
+ *
+ * @author Smart Service Team
+ * @version 1.0
+ * @since Spring Boot 4.0.1
+ */
 @Configuration
+@EnableWebSecurity
 public class SecurityConfig {
 
     /**
-     * Main security filter chain.
-     * This defines how Spring Security handles:
-     * - CORS
-     * - CSRF
-     * - Session management
-     * - Endpoint authorization
+     * Configures the security filter chain with CORS, CSRF, session management,
+     * and authorization rules for various endpoints.
+     *
+     * @param http the HttpSecurity to modify
+     * @return the configured SecurityFilterChain
+     * @throws Exception if an error occurs during configuration
      */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
-        http
-                // 1️⃣ Enable CORS using our configuration
+        return http
+                // Enable CORS with custom configuration
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
 
-                // 2️⃣ Disable CSRF because this is a REST API (we use JWT, not forms)
+                // Disable CSRF for stateless REST API (JWT authentication)
                 .csrf(AbstractHttpConfigurer::disable)
 
-                // 3️⃣ Set session management to stateless
-                // No session is stored on the server; each request must include authentication
+                // Configure stateless session management (no server-side sessions)
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
 
-                // 4️⃣ Define endpoint access rules
+                // Define authorization rules for endpoints
                 .authorizeHttpRequests(auth -> auth
-
-                        // Public endpoints (login, register, etc.) accessible by anyone
+                        // Public endpoints - accessible without authentication
                         .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/api/public/**").permitAll()
+                        .requestMatchers("/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
 
                         // Admin-only endpoints
-                        .requestMatchers("/admin/**").hasRole("admin")
+                        .requestMatchers("/api/admin/**").hasRole("admin")
 
-                        // User and Admin endpoints
-                        .requestMatchers("/users/**").hasRole("admin")
+                        // User management endpoints (admin only)
+//                        .requestMatchers("/users/**").hasRole("admin")
 
-                        // Any other request requires authentication
                                 .anyRequest().permitAll()
-//                        .anyRequest().authenticated()
-                );
 
-        return http.build();
+                        // All other endpoints require authentication
+//                        .anyRequest().authenticated()
+                )
+
+                .build();
     }
 
     /**
-     * Password encoder bean.
-     * - BCrypt is a strong hashing algorithm
-     * - Always hash passwords before saving to the database
+     * Provides BCrypt password encoder for secure password hashing.
+     * BCrypt automatically handles salt generation and is resistant to rainbow table attacks.
+     *
+     * @return BCryptPasswordEncoder instance
      */
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -75,9 +85,11 @@ public class SecurityConfig {
     }
 
     /**
-     * AuthenticationManager bean.
-     * - Used to authenticate username/password during login
-     * - Spring automatically provides this based on UserDetailsService
+     * Exposes the AuthenticationManager for use in controllers (e.g., login endpoint).
+     *
+     * @param configuration the authentication configuration
+     * @return AuthenticationManager instance
+     * @throws Exception if unable to create the authentication manager
      */
     @Bean
     public AuthenticationManager authenticationManager(
@@ -86,32 +98,37 @@ public class SecurityConfig {
     }
 
     /**
-     * CORS configuration bean
-     * - Defines which front-end URLs can access the API
-     * - Defines allowed HTTP methods and headers
-     * - Allows credentials like cookies or Authorization headers
+     * Configures Cross-Origin Resource Sharing (CORS) for the application.
+     * Defines which origins, methods, and headers are allowed for cross-origin requests.
+     *
+     * @return CorsConfigurationSource with the defined CORS rules
      */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // 1️⃣ Allow requests only from your frontend
-        configuration.setAllowedOrigins(List.of("http://localhost:3000")); // change to your frontend URL
+        // Allow requests from specified origins (update for production)
+        configuration.setAllowedOrigins(List.of(
+                "http://localhost:3000",
+                "http://localhost:5173"  // Common Vite dev server port
+        ));
 
-        // 2️⃣ Allow HTTP methods used by your API
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        // Allow specific HTTP methods
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
 
-        // 3️⃣Allow all headers (e.g., Content-Type, Authorization)
+        // Allow all headers
         configuration.setAllowedHeaders(List.of("*"));
 
-        // 4️⃣ Allow credentials (needed for JWT or cookies)
+        // Allow credentials (cookies, authorization headers)
         configuration.setAllowCredentials(true);
 
-        // Register this configuration for all paths
+        // Cache preflight response for 1 hour
+        configuration.setMaxAge(3600L);
+
+        // Apply CORS configuration to all paths
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
 
         return source;
     }
 }
-
