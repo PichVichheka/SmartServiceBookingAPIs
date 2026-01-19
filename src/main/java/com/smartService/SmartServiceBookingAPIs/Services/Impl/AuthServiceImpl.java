@@ -7,7 +7,6 @@ import com.smartService.SmartServiceBookingAPIs.DTO.response.RegisterResponse;
 import com.smartService.SmartServiceBookingAPIs.DTO.response.UserResponse;
 import com.smartService.SmartServiceBookingAPIs.Entity.Roles;
 import com.smartService.SmartServiceBookingAPIs.Entity.Users;
-import com.smartService.SmartServiceBookingAPIs.Exception.ErrorsExceptionFactory;
 import com.smartService.SmartServiceBookingAPIs.Mapper.MapperFunction;
 import com.smartService.SmartServiceBookingAPIs.Repositories.RoleRepository;
 import com.smartService.SmartServiceBookingAPIs.Repositories.UserRepository;
@@ -90,6 +89,7 @@ public class AuthServiceImpl implements AuthService {
                 userResponse
         );
     }
+
 
     @Override
     public AuthResponse login(AuthRequest request, HttpServletResponse response) {
