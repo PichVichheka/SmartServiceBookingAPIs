@@ -7,6 +7,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -20,9 +23,9 @@ public class RoleSeeder implements CommandLineRunner {
         log.info("Seeding...");
 
 
-        seed("admin");
-        seed("customer");
-        seed("provider");
+        List.of("admin", "customer", "provider")
+                .forEach(this::seed);
+
 
         log.info("Seeding completed.");
     }
