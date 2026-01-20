@@ -3,6 +3,7 @@ package com.smartService.SmartServiceBookingAPIs.Services.Impl;
 import com.smartService.SmartServiceBookingAPIs.DTO.request.AuthRequest;
 import com.smartService.SmartServiceBookingAPIs.DTO.request.RegisterRequest;
 import com.smartService.SmartServiceBookingAPIs.DTO.response.AuthResponse;
+import com.smartService.SmartServiceBookingAPIs.DTO.response.RefreshTokenResponse;
 import com.smartService.SmartServiceBookingAPIs.DTO.response.RegisterResponse;
 import com.smartService.SmartServiceBookingAPIs.DTO.response.UserResponse;
 import com.smartService.SmartServiceBookingAPIs.Entity.Roles;
@@ -14,6 +15,7 @@ import com.smartService.SmartServiceBookingAPIs.Services.AuthService;
 import com.smartService.SmartServiceBookingAPIs.Services.Jwt.JwtService;
 import com.smartService.SmartServiceBookingAPIs.Utils.CookieHelper;
 import com.smartService.SmartServiceBookingAPIs.Utils.HelperFunction;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -42,6 +44,81 @@ public class AuthServiceImpl implements AuthService {
     private final MapperFunction mapperFunction;
     private final AuthenticationManager authenticationManager;
     private final HelperFunction helperFunction;
+
+    @Override
+    public RefreshTokenResponse refreshToken(HttpServletRequest request, HttpServletResponse response) {
+
+        // ============================
+        // Extract refresh token from cookie
+        // ============================
+        String refreshToken = cookieHelper.getCookieValue(request, "refresh_token");
+
+        if (refreshToken == null || refreshToken.isBlank()) {
+            throw unauthorized("Refresh token is missing.");
+        }
+
+        // ============================
+        // Validate refresh token
+        // ============================
+        if (!jwtService.validateToken(refreshToken)) {
+            throw unauthorized("Invalid or expired refresh token.");
+        }
+
+        // ============================
+        // Extract user info from refresh token
+        // ============================
+        String userId = jwtService.extractUserId(refreshToken);
+        String username = jwtService.extractUsername(refreshToken);
+
+        // ============================
+        // Load user from database
+        // ============================
+        Users user = userRepository.findById(Long.parseLong(userId))
+                .orElseThrow(() -> notFound("User not found."));
+
+        // Verify the username matches (additional security check)
+        if (!user.getUsername().equals(username)) {
+            throw unauthorized("Invalid refresh token.");
+        }
+
+        // ============================
+        // Extract roles for new access token
+        // ============================
+        List<String> roles = user.getRoles()
+                .stream()
+                .map(Roles::getName)
+                .toList();
+
+        // ============================
+        // Generate new tokens
+        // ============================
+        String newAccessToken = jwtService.generateAccessToken(
+                user.getId().toString(),
+                user.getEmail(),
+                user.getUsername(),
+                roles
+        );
+
+        String newRefreshToken = jwtService.generateRefreshToken(
+                user.getId().toString(),
+                user.getUsername()
+        );
+
+        // ============================
+        // Set new tokens in cookies
+        // ============================
+        cookieHelper.setAuthCookie(response, "access_token", newAccessToken, 15 * 60);           // 15 min
+        cookieHelper.setAuthCookie(response, "refresh_token", newRefreshToken, 7 * 24 * 60 * 60); // 7 days
+
+        // ============================
+        // Return lightweight response
+        // ============================
+        return new RefreshTokenResponse(
+                true,
+                "Token refreshed successfully.",
+                newAccessToken
+        );
+    }
 
     @Override
     public RegisterResponse register(RegisterRequest request, HttpServletResponse response) {
