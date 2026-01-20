@@ -2,7 +2,6 @@ package com.smartService.SmartServiceBookingAPIs.Entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.jspecify.annotations.NullMarked;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,7 +10,6 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@NullMarked
 @Entity
 @Table(name = "users")
 @Getter
