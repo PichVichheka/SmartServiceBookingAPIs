@@ -1,6 +1,7 @@
 package com.smartService.SmartServiceBookingAPIs.Utils;
 
 import com.smartService.SmartServiceBookingAPIs.DTO.request.RegisterRequest;
+import com.smartService.SmartServiceBookingAPIs.DTO.request.UserCreateRequest;
 import com.smartService.SmartServiceBookingAPIs.Repositories.UserRepository;
 import com.smartService.SmartServiceBookingAPIs.DTO.request.UserUpdateRequest;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,35 @@ public class HelperFunction {
     // =================
     // CREATE VALIDATION
     // =================
-    public void validateCreate(RegisterRequest request) {
+    public void validateRegister(RegisterRequest request) {
+
+        String email = request.getEmail();
+        String username = request.getUsername();
+
+        // EMAIL REQUIRED
+        if (email == null || email.isBlank()) {
+            throw badRequest("Email is required.");
+        }
+
+        validateEmailFormat(email);
+
+        // EMAIL ALREADY EXISTS
+        if (userRepository.existsByEmail(email)) {
+            throw badRequest("Email is already in use.");
+        }
+
+        // USERNAME REQUIRED
+        if (username == null || username.isBlank()) {
+            throw badRequest("Username is required.");
+        }
+
+        // USERNAME ALREADY EXISTS
+        if (userRepository.existsByUsername(username)) {
+            throw badRequest("Username is already in use.");
+        }
+    }
+
+    public void validateCreate(UserCreateRequest request) {
 
         String email = request.getEmail();
         String username = request.getUsername();
