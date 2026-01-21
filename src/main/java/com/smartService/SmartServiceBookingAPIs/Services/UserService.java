@@ -2,14 +2,13 @@ package com.smartService.SmartServiceBookingAPIs.Services;
 
 import com.smartService.SmartServiceBookingAPIs.DTO.request.UserCreateRequest;
 import com.smartService.SmartServiceBookingAPIs.DTO.request.UserUpdateRequest;
+import com.smartService.SmartServiceBookingAPIs.DTO.response.PaginatedResponse;
 import com.smartService.SmartServiceBookingAPIs.DTO.response.UserResponse;
-import com.smartService.SmartServiceBookingAPIs.Entity.Users;
-
-import java.util.List;
 
 public interface UserService {
 
-    List<Users> getAll();
+    PaginatedResponse<UserResponse> getAll(int page, int size);
+//    List<Users> getAll();
 
     UserResponse getById(Long id);
 
