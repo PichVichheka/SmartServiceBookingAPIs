@@ -126,7 +126,7 @@ public class AuthServiceImpl implements AuthService {
         // ============================
         // Validate input fields
         // ============================
-        helperFunction.validateCreate(request);
+        helperFunction.validateRegister(request);
 
         // ============================
         // Map request to user entity
