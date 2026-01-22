@@ -11,7 +11,6 @@ import com.smartService.SmartServiceBookingAPIs.Services.UserService;
 import com.smartService.SmartServiceBookingAPIs.Utils.HelperFunction;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.catalina.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;

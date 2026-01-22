@@ -58,9 +58,9 @@ public class SecurityConfig {
 
                                 // ========== PRODUCTION SECURITY - UNCOMMENT BEFORE DEPLOYMENT ==========
                                 // Role-based access control
-//                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
-//                        .requestMatchers("/api/provider/**").hasRole("PROVIDER")
-//                        .requestMatchers("/api/customer/**").hasRole("CUSTOMER")
+//                        .requestMatchers("/api/admin/**").hasRole("admin")
+//                        .requestMatchers("/api/provider/**").hasRole("provider")
+                                .requestMatchers("/api/bookings/**").hasRole("customer")
 //
 //                        // All other endpoints require authentication
 //                        .anyRequest().authenticated()

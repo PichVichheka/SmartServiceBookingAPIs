@@ -16,7 +16,7 @@ public class Booking {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     // FK → users.id
     @ManyToOne(fetch = FetchType.LAZY)
@@ -43,4 +43,7 @@ public class Booking {
 
     @Column(name = "total_price", nullable = false, precision = 10, scale = 2)
     private BigDecimal totalPrice;
+
+    @Column(name = "status", nullable = false)
+    private String status;
 }
