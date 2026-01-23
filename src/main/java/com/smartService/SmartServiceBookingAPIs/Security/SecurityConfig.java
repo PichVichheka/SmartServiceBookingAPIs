@@ -51,16 +51,16 @@ public class SecurityConfig {
                                 // Public endpoints - no authentication required
                                 .requestMatchers("/api/public/**").permitAll()
                                 .requestMatchers("/api/auth/**").permitAll()
-                                .requestMatchers("/api/users/**").permitAll()
 
                                 // Swagger/OpenAPI documentation - public access
                                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
 
                                 // ========== PRODUCTION SECURITY - UNCOMMENT BEFORE DEPLOYMENT ==========
                                 // Role-based access control
-//                        .requestMatchers("/api/admin/**").hasRole("admin")
+                        .requestMatchers("/api/admin/**").hasRole("admin")
+                                .requestMatchers("/api/users/**").hasRole("admin")
 //                        .requestMatchers("/api/provider/**").hasRole("provider")
-                                .requestMatchers("/api/bookings/**").hasRole("customer")
+//                        .requestMatchers("/api/customer/**").hasRole("customer")
 //
 //                        // All other endpoints require authentication
 //                        .anyRequest().authenticated()

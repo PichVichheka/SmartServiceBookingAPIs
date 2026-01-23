@@ -18,8 +18,8 @@ import static com.smartService.SmartServiceBookingAPIs.Exception.ErrorsException
 @Slf4j
 @Component
 @RequiredArgsConstructor
-@Order(2)
-public class AdminSeeder implements CommandLineRunner {
+@Order(3)
+public class ProviderSeeder implements CommandLineRunner {
 
     private final RoleRepository roleRepository;
     private final UserRepository userRepository;
@@ -30,33 +30,33 @@ public class AdminSeeder implements CommandLineRunner {
     public void run(String... args) throws Exception {
         log.info("Seeding...");
 
-        seedAdmin();
+        seedProvider();
 
-        log.info("Seeding completed.");
+        log.info(("Seeding completed."));
     }
 
-    private void seedAdmin() {
-        String adminEmail = "admin@gmail.com";
+    private void seedProvider() {
+        String providerEmail = "provider@gmail.com";
 
-        if (userRepository.existsByEmail(adminEmail)) {
-            log.info("Admin already exist! Skipped seeding.");
+        if (userRepository.existsByEmail(providerEmail)) {
+            log.info("Provider already exist! Skipped seeding.");
             return;
         }
 
-        Roles adminRole = roleRepository.findByName("admin")
+        Roles providerRole = roleRepository.findByName("provider")
                 .orElseThrow(() -> notFound("Role not found."));
 
-        Users admin = Users.builder()
-                .fullname("Admin user")
-                .username("admin12")
-                .phone("0889966553")
-                .email(adminEmail)
-                .password(passwordEncoder.encode("admin123"))
-                .roles(Set.of(adminRole))
+        Users provider = Users.builder()
+                .fullname("Provider user")
+                .username("provider12")
+                .phone("0886665522")
+                .email(providerEmail)
+                .password(passwordEncoder.encode("provider123"))
+                .roles(Set.of(providerRole))
                 .build();
 
-        userRepository.save(admin);
+        userRepository.save(provider);
 
-        log.info("Admin seed successfully.");
+        log.info("Provider seed successfully.");
     }
 }

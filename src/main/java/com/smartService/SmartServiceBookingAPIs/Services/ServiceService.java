@@ -1,19 +1,18 @@
 package com.smartService.SmartServiceBookingAPIs.Services;
 
-import com.smartService.SmartServiceBookingAPIs.Entity.Services;
-import java.util.List;
+import com.smartService.SmartServiceBookingAPIs.DTO.request.ServiceCreateRequest;
+import com.smartService.SmartServiceBookingAPIs.DTO.request.ServiceUpdateRequest;
+import com.smartService.SmartServiceBookingAPIs.DTO.response.PaginatedResponse;
+import com.smartService.SmartServiceBookingAPIs.DTO.response.ServiceResponse;
 
 public interface ServiceService {
+    PaginatedResponse<ServiceResponse> getAll(int page, int size);
 
-    Services createService(Services services);
+    ServiceResponse getById(Long id);
 
-    Services getServiceById(Integer id);
+    ServiceResponse create(ServiceCreateRequest request);
 
-    List<Services> getAllServices();  // ← PUT IT HERE
+    ServiceResponse update(ServiceUpdateRequest request);
 
-    List<Services> getServicesByProviderId(Integer providerId);
-
-    Services updateService(Integer id, Services services);
-
-    void deleteService(Integer id);
+    void delete(Long id);
 }

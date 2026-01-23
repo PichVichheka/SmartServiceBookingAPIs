@@ -4,12 +4,14 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.nio.file.FileStore;
 
 @Entity
 @Table(name = "services")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Services {
 
     @Id
