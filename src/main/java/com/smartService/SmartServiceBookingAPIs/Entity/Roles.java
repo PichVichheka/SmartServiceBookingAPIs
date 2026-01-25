@@ -22,7 +22,6 @@ public class Roles {
     private String name;
 
     @ManyToMany(mappedBy = "roles")
-    @Builder.Default
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Set<Users> users = new HashSet<>();

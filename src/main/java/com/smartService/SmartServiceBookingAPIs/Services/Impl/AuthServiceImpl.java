@@ -4,11 +4,9 @@ import com.smartService.SmartServiceBookingAPIs.DTO.request.AuthRequest;
 import com.smartService.SmartServiceBookingAPIs.DTO.request.RegisterRequest;
 import com.smartService.SmartServiceBookingAPIs.DTO.response.AuthResponse;
 import com.smartService.SmartServiceBookingAPIs.DTO.response.RefreshTokenResponse;
-import com.smartService.SmartServiceBookingAPIs.DTO.response.RegisterResponse;
 import com.smartService.SmartServiceBookingAPIs.DTO.response.UserResponse;
 import com.smartService.SmartServiceBookingAPIs.Entity.Roles;
 import com.smartService.SmartServiceBookingAPIs.Entity.Users;
-import com.smartService.SmartServiceBookingAPIs.Mapper.MapperFunction;
 import com.smartService.SmartServiceBookingAPIs.Repositories.RoleRepository;
 import com.smartService.SmartServiceBookingAPIs.Repositories.UserRepository;
 import com.smartService.SmartServiceBookingAPIs.Services.AuthService;
@@ -41,7 +39,6 @@ public class AuthServiceImpl implements AuthService {
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final CookieHelper cookieHelper;
-    private final MapperFunction mapperFunction;
     private final AuthenticationManager authenticationManager;
     private final HelperFunction helperFunction;
 
@@ -121,7 +118,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public RegisterResponse register(RegisterRequest request, HttpServletResponse response) {
+    public AuthResponse register(RegisterRequest request, HttpServletResponse response) {
 
         // ============================
         // Validate input fields
@@ -129,10 +126,14 @@ public class AuthServiceImpl implements AuthService {
         helperFunction.validateRegister(request);
 
         // ============================
-        // Map request to user entity
+        // Map request to user entity (MANUAL MAPPING)
         // ============================
-        Users user = mapperFunction.toUsers(request);
-        user.setPassword(Objects.requireNonNull(passwordEncoder.encode(request.getPassword())));
+        Users user = new Users();
+        user.setFullname(request.getFullname());
+        user.setUsername(request.getUsername());
+        user.setEmail(request.getEmail());
+        user.setPhone(request.getPhone());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
 
         // ============================
         // Assign default role (customer)
@@ -176,10 +177,17 @@ public class AuthServiceImpl implements AuthService {
         cookieHelper.setAuthCookie(response, "refresh_token", refreshToken, 7 * 24 * 60 * 60); // 7 days
 
         // ============================
-        // Map user entity to response DTO
+        // Map user entity to response DTO (MANUAL MAPPING)
         // ============================
-        UserResponse userResponse = mapperFunction.toUserResponse(savedUser);
-        return new RegisterResponse(
+        UserResponse userResponse = new UserResponse();
+        userResponse.setId(savedUser.getId());
+        userResponse.setFullname(savedUser.getFullname());
+        userResponse.setUsername(savedUser.getUsername());
+        userResponse.setEmail(savedUser.getEmail());
+        userResponse.setPhone(savedUser.getPhone());
+        userResponse.setRoles(roles);
+
+        return new AuthResponse(
                 201,
                 "Registration successful.",
                 accessToken,
@@ -254,9 +262,16 @@ public class AuthServiceImpl implements AuthService {
         cookieHelper.setAuthCookie(response, "refresh_token", refreshToken, 7 * 24 * 60 * 60); // 7 days
 
         // ============================
-        // Map user entity to response DTO
+        // Map user entity to response DTO (MANUAL MAPPING)
         // ============================
-        UserResponse userResponse = mapperFunction.toUserResponse(user);
+        UserResponse userResponse = new UserResponse();
+        userResponse.setId(user.getId());
+        userResponse.setFullname(user.getFullname());
+        userResponse.setUsername(user.getUsername());
+        userResponse.setEmail(user.getEmail());
+        userResponse.setPhone(user.getPhone());
+        userResponse.setRoles(roles);
+
         return new AuthResponse(
                 200,
                 "Login successful.",

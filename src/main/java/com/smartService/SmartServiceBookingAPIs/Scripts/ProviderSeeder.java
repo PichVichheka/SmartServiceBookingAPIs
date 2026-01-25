@@ -46,14 +46,13 @@ public class ProviderSeeder implements CommandLineRunner {
         Roles providerRole = roleRepository.findByName("provider")
                 .orElseThrow(() -> notFound("Role not found."));
 
-        Users provider = Users.builder()
-                .fullname("Provider user")
-                .username("provider12")
-                .phone("0886665522")
-                .email(providerEmail)
-                .password(passwordEncoder.encode("provider123"))
-                .roles(Set.of(providerRole))
-                .build();
+        Users provider = new Users();
+        provider.setFullname("Provider user");
+        provider.setUsername("provider12");
+        provider.setPhone("0886665522");
+        provider.setEmail(providerEmail);
+        provider.setPassword(passwordEncoder.encode("provider123"));
+        provider.setRoles(Set.of(providerRole));
 
         userRepository.save(provider);
 

@@ -4,7 +4,6 @@ import com.smartService.SmartServiceBookingAPIs.DTO.request.AuthRequest;
 import com.smartService.SmartServiceBookingAPIs.DTO.request.RegisterRequest;
 import com.smartService.SmartServiceBookingAPIs.DTO.response.AuthResponse;
 import com.smartService.SmartServiceBookingAPIs.DTO.response.RefreshTokenResponse;
-import com.smartService.SmartServiceBookingAPIs.DTO.response.RegisterResponse;
 import com.smartService.SmartServiceBookingAPIs.Services.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,16 +23,16 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/register")
-    public ResponseEntity<RegisterResponse> register(
+    public ResponseEntity<AuthResponse> register(
             @RequestBody RegisterRequest request,
             HttpServletResponse response
     ) {
-        RegisterResponse registerResponse =
+        AuthResponse authResponse =
                 authService.register(request, response);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(registerResponse);
+                .body(authResponse);
     }
 
     @PostMapping("/login")

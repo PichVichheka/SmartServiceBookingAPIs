@@ -197,5 +197,4 @@ public class JwtService {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> unauthorized("User not found"));
     }
-
 }

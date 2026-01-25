@@ -46,14 +46,14 @@ public class AdminSeeder implements CommandLineRunner {
         Roles adminRole = roleRepository.findByName("admin")
                 .orElseThrow(() -> notFound("Role not found."));
 
-        Users admin = Users.builder()
-                .fullname("Admin user")
-                .username("admin12")
-                .phone("0889966553")
-                .email(adminEmail)
-                .password(passwordEncoder.encode("admin123"))
-                .roles(Set.of(adminRole))
-                .build();
+        Users admin = new Users();
+                admin.setFullname("Admin user");
+                admin.setUsername("admin123");
+                admin.setPhone("0889966553");
+                admin.setEmail(adminEmail);
+                admin.setPassword(passwordEncoder.encode("admin123"));
+                admin.setRoles(Set.of(adminRole));
+
 
         userRepository.save(admin);
 

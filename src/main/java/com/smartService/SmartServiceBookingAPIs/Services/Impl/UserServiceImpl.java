@@ -4,8 +4,8 @@ import com.smartService.SmartServiceBookingAPIs.DTO.request.UserCreateRequest;
 import com.smartService.SmartServiceBookingAPIs.DTO.request.UserUpdateRequest;
 import com.smartService.SmartServiceBookingAPIs.DTO.response.PaginatedResponse;
 import com.smartService.SmartServiceBookingAPIs.DTO.response.UserResponse;
+import com.smartService.SmartServiceBookingAPIs.Entity.Roles;
 import com.smartService.SmartServiceBookingAPIs.Entity.Users;
-import com.smartService.SmartServiceBookingAPIs.Mapper.MapperFunction;
 import com.smartService.SmartServiceBookingAPIs.Repositories.UserRepository;
 import com.smartService.SmartServiceBookingAPIs.Services.UserService;
 import com.smartService.SmartServiceBookingAPIs.Utils.HelperFunction;
@@ -29,7 +29,6 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final HelperFunction helperFunction;
-    private final MapperFunction mapperFunction;
 
     @Override
     public PaginatedResponse<UserResponse> getAll(int page, int size) {
@@ -37,9 +36,24 @@ public class UserServiceImpl implements UserService {
         Pageable pageable = PageRequest.of(page, size);
         Page<Users> usersPage = userRepository.findAll(pageable);
 
+        // Manual mapping: Users -> UserResponse
         List<UserResponse> userResponses = usersPage.getContent()
                 .stream()
-                .map(mapperFunction::toUserResponse)
+                .map(user -> {
+                    UserResponse response = new UserResponse();
+                    response.setId(user.getId());
+                    response.setFullname(user.getFullname());
+                    response.setUsername(user.getUsername());
+                    response.setEmail(user.getEmail());
+                    response.setPhone(user.getPhone());
+                    if (user.getRoles() != null) {
+                        response.setRoles(user.getRoles()
+                                .stream()
+                                .map(Roles::getName)
+                                .toList());
+                    }
+                    return response;
+                })
                 .toList();
 
         PaginatedResponse.PaginationMeta paginationMeta =
@@ -61,7 +75,21 @@ public class UserServiceImpl implements UserService {
         Users user = userRepository.findById(id)
                 .orElseThrow(() -> notFound("User not found."));
 
-        return mapperFunction.toUserResponse(user);
+        // Manual mapping: Users -> UserResponse
+        UserResponse response = new UserResponse();
+        response.setId(user.getId());
+        response.setFullname(user.getFullname());
+        response.setUsername(user.getUsername());
+        response.setEmail(user.getEmail());
+        response.setPhone(user.getPhone());
+        if (user.getRoles() != null) {
+            response.setRoles(user.getRoles()
+                    .stream()
+                    .map(Roles::getName)
+                    .toList());
+        }
+
+        return response;
     }
 
     @Override
@@ -69,12 +97,31 @@ public class UserServiceImpl implements UserService {
 
         helperFunction.validateCreate(request);
 
-        Users user = mapperFunction.toUsers(request);
+        // Manual mapping: UserCreateRequest -> Users
+        Users user = new Users();
+        user.setFullname(request.getFullname());
+        user.setUsername(request.getUsername());
+        user.setEmail(request.getEmail());
+        user.setPhone(request.getPhone());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
         Users savedUser = userRepository.save(user);
 
-        return mapperFunction.toUserResponse(savedUser);
+        // Manual mapping: Users -> UserResponse
+        UserResponse response = new UserResponse();
+        response.setId(savedUser.getId());
+        response.setFullname(savedUser.getFullname());
+        response.setUsername(savedUser.getUsername());
+        response.setEmail(savedUser.getEmail());
+        response.setPhone(savedUser.getPhone());
+        if (savedUser.getRoles() != null) {
+            response.setRoles(savedUser.getRoles()
+                    .stream()
+                    .map(Roles::getName)
+                    .toList());
+        }
+
+        return response;
     }
 
     @Override
@@ -83,10 +130,31 @@ public class UserServiceImpl implements UserService {
         Users updatedUser = userRepository.findById(id)
                 .orElseThrow(() -> notFound("User not found, Update failed."));
 
-        mapperFunction.updateUser(request, updatedUser);
+        // Manual mapping: UserUpdateRequest -> Users (update existing entity)
+        if (request.getFullname() != null) {
+            updatedUser.setFullname(request.getFullname());
+        }
+        if (request.getPhone() != null) {
+            updatedUser.setPhone(request.getPhone());
+        }
+
         Users userUpdate = userRepository.save(updatedUser);
 
-        return mapperFunction.toUserResponse(userUpdate);
+        // Manual mapping: Users -> UserResponse
+        UserResponse response = new UserResponse();
+        response.setId(userUpdate.getId());
+        response.setFullname(userUpdate.getFullname());
+        response.setUsername(userUpdate.getUsername());
+        response.setEmail(userUpdate.getEmail());
+        response.setPhone(userUpdate.getPhone());
+        if (userUpdate.getRoles() != null) {
+            response.setRoles(userUpdate.getRoles()
+                    .stream()
+                    .map(Roles::getName)
+                    .toList());
+        }
+
+        return response;
     }
 
     @Override
@@ -94,5 +162,7 @@ public class UserServiceImpl implements UserService {
 
         Users deletedUser = userRepository.findById(id)
                 .orElseThrow(() -> notFound("User not found, Delete failed."));
+
+        userRepository.delete(deletedUser);
     }
 }

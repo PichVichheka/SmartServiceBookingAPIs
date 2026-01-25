@@ -1,63 +1,42 @@
 package com.smartService.SmartServiceBookingAPIs.Entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 
+@Data
 @Entity
 @Table(name = "users")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class Users implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(name = "fullname", nullable = false)
     private String fullname;
 
-    @Column(nullable = false)
+    @Column(name = "username", nullable = false, unique = true)
     private String username;
 
-    @Column(nullable = true)
+    // ✅ optional field
+    @Column(name = "phone", nullable = true)
     private String phone;
 
-    @Column(nullable = false)
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false)
+    @Column(name = "password", nullable = false)
     private String password;
-
-    // =====================
-    // ENABLED
-    // =====================
-
-    @Column(nullable = false)
-    private boolean enabled = true;
-
-    @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    // 🔥 REQUIRED FOR MAPSTRUCT
-    public boolean getEnabled() {
-        return enabled;
-    }
-
-    // =====================
-    // ROLES
-    // =====================
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -65,35 +44,18 @@ public class Users implements UserDetails {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    @Builder.Default
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private Set<Roles> roles = new HashSet<>();
+//    public boolean hasRole(String roleName) {
+//        return roles != null &&
+//                roles.stream()
+//                        .anyMatch(role -> role.getName().equalsIgnoreCase(roleName));
+//    }
 
-    // =====================
-    // AUDIT
-    // =====================
-
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedAt;
-
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
-    }
-
-    // =========================
-    // UserDetails
-    // =========================
+    /* =========================
+       UserDetails overrides
+       ========================= */
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -103,12 +65,23 @@ public class Users implements UserDetails {
     }
 
     @Override
-    public String getUsername() {
-        return email;
+    public boolean isAccountNonExpired() {
+        return true;
     }
 
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
 
-    @Override public boolean isAccountNonExpired() { return true; }
-    @Override public boolean isAccountNonLocked() { return true; }
-    @Override public boolean isCredentialsNonExpired() { return true; }
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }
+
