@@ -1,9 +1,11 @@
 package com.smartService.SmartServiceBookingAPIs.Services.Jwt;
 
 import com.smartService.SmartServiceBookingAPIs.Entity.Users;
+import com.smartService.SmartServiceBookingAPIs.Repositories.UserRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,8 +24,10 @@ import java.util.Map;
 import static com.smartService.SmartServiceBookingAPIs.Exception.ErrorsExceptionFactory.unauthorized;
 
 @Service
+@RequiredArgsConstructor
 public class JwtService {
 
+    private final UserRepository userRepository;
     private static final Logger logger = LoggerFactory.getLogger(JwtService.class);
 
     @Value("${spring.jwt.secret}")
@@ -60,7 +64,7 @@ public class JwtService {
         claims.put("roles", roles);
         claims.put("type", "access");
 
-        return buildToken(claims, username, accessTokenExpire);
+        return buildToken(claims, email, accessTokenExpire);
     }
 
     // =========================
@@ -188,12 +192,9 @@ public class JwtService {
             throw unauthorized("User not authenticated");
         }
 
-        Object principal = authentication.getPrincipal();
+        String email = authentication.getName(); // <-- comes from JWT subject
 
-        if (principal instanceof Users user) {
-            return user;
-        }
-
-        throw unauthorized("Invalid authentication principal");
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> unauthorized("User not found"));
     }
 }

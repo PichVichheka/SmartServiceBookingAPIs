@@ -4,7 +4,6 @@ import com.smartService.SmartServiceBookingAPIs.DTO.request.AuthRequest;
 import com.smartService.SmartServiceBookingAPIs.DTO.request.RegisterRequest;
 import com.smartService.SmartServiceBookingAPIs.DTO.response.AuthResponse;
 import com.smartService.SmartServiceBookingAPIs.DTO.response.RefreshTokenResponse;
-import com.smartService.SmartServiceBookingAPIs.DTO.response.RegisterResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -15,7 +14,7 @@ public interface AuthService {
             HttpServletResponse response
     );
 
-    RegisterResponse register(
+    AuthResponse register(
             RegisterRequest request,
             HttpServletResponse response
     );

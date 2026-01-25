@@ -32,7 +32,7 @@ public class RoleSeeder implements CommandLineRunner {
 
     private void seed(String roleName) {
         if (roleRepository.existsByName(roleName)) {
-            log.info("This role already exist.");
+            log.info("This role already exist! Skipped seeding.");
             return;
         }
 

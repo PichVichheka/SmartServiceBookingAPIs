@@ -18,8 +18,8 @@ import static com.smartService.SmartServiceBookingAPIs.Exception.ErrorsException
 @Slf4j
 @Component
 @RequiredArgsConstructor
-@Order(2)
-public class AdminSeeder implements CommandLineRunner {
+@Order(3)
+public class ProviderSeeder implements CommandLineRunner {
 
     private final RoleRepository roleRepository;
     private final UserRepository userRepository;
@@ -30,33 +30,32 @@ public class AdminSeeder implements CommandLineRunner {
     public void run(String... args) throws Exception {
         log.info("Seeding...");
 
-        seedAdmin();
+        seedProvider();
 
-        log.info("Seeding completed.");
+        log.info(("Seeding completed."));
     }
 
-    private void seedAdmin() {
-        String adminEmail = "admin@gmail.com";
+    private void seedProvider() {
+        String providerEmail = "provider@gmail.com";
 
-        if (userRepository.existsByEmail(adminEmail)) {
-            log.info("Admin already exist! Skipped seeding.");
+        if (userRepository.existsByEmail(providerEmail)) {
+            log.info("Provider already exist! Skipped seeding.");
             return;
         }
 
-        Roles adminRole = roleRepository.findByName("admin")
+        Roles providerRole = roleRepository.findByName("provider")
                 .orElseThrow(() -> notFound("Role not found."));
 
-        Users admin = new Users();
-                admin.setFullname("Admin user");
-                admin.setUsername("admin123");
-                admin.setPhone("0889966553");
-                admin.setEmail(adminEmail);
-                admin.setPassword(passwordEncoder.encode("admin123"));
-                admin.setRoles(Set.of(adminRole));
+        Users provider = new Users();
+        provider.setFullname("Provider user");
+        provider.setUsername("provider12");
+        provider.setPhone("0886665522");
+        provider.setEmail(providerEmail);
+        provider.setPassword(passwordEncoder.encode("provider123"));
+        provider.setRoles(Set.of(providerRole));
 
+        userRepository.save(provider);
 
-        userRepository.save(admin);
-
-        log.info("Admin seed successfully.");
+        log.info("Provider seed successfully.");
     }
 }

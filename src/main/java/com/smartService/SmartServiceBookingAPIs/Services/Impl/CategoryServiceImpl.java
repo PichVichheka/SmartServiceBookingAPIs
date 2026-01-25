@@ -3,18 +3,17 @@ package com.smartService.SmartServiceBookingAPIs.Services.Impl;
 import com.smartService.SmartServiceBookingAPIs.Entity.Category;
 import com.smartService.SmartServiceBookingAPIs.Repositories.CategoryRepository;
 import com.smartService.SmartServiceBookingAPIs.Services.CategoryService;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
-
-    public CategoryServiceImpl(CategoryRepository categoryRepository) {
-        this.categoryRepository = categoryRepository;
-    }
 
     // ✅ CREATE
     @Override

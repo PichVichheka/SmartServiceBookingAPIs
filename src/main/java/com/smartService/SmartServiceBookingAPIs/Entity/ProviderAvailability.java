@@ -15,7 +15,7 @@ public class ProviderAvailability {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     // FK → users.id
     @ManyToOne(fetch = FetchType.LAZY)
@@ -32,5 +32,6 @@ public class ProviderAvailability {
     private LocalTime endTime;
 
     @Column(name = "is_available")
-    private Boolean isAvailable = true;
+    private boolean available = true;
+
 }
