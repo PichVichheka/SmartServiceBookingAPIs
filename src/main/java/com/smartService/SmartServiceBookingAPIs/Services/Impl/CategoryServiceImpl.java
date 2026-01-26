@@ -28,7 +28,7 @@ public class CategoryServiceImpl implements CategoryService {
         List<CategoryResponse> categoryResponses = categoryPage.getContent()
                 .stream()
                 .map(category -> {
-                    CategoryResponse response = new CategoryResponse(());
+                    CategoryResponse response = new CategoryResponse();
                     response.setId(category.getId());
                     response.setName(category.getName());
                     response.setDescription(category.getDescription());
