@@ -188,14 +188,14 @@ public class JwtService {
         Authentication authentication =
                 SecurityContextHolder.getContext().getAuthentication();
 
-        if (authentication == null || !authentication.isAuthenticated()) {
+        if (authentication == null
+                || !authentication.isAuthenticated()
+                || authentication.getPrincipal() instanceof String) {
             throw unauthorized("User not authenticated");
         }
 
-        String email = authentication.getName(); // <-- comes from JWT subject
-
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> unauthorized("User not found"));
+        return (Users) authentication.getPrincipal();
     }
+
 
 }

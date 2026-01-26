@@ -1,22 +1,21 @@
 package com.smartService.SmartServiceBookingAPIs.Services;
 
 
+import com.smartService.SmartServiceBookingAPIs.DTO.request.CategoryRequest;
+import com.smartService.SmartServiceBookingAPIs.DTO.response.CategoryResponse;
+import com.smartService.SmartServiceBookingAPIs.DTO.response.PaginatedResponse;
 import com.smartService.SmartServiceBookingAPIs.Entity.Category;
 
 import java.util.List;
 
 public interface CategoryService {
-    Category createCategory(Category category);
+    PaginatedResponse<CategoryResponse> getAllCategories(int page, int size);
 
-    // ✅ READ (ALL)
-    List<Category> getAllCategories();
+    CategoryResponse getCategoryById(Long id);
 
-    // ✅ READ (BY ID)
-    Category getCategoryById(Long id);
+    CategoryResponse createCategory(CategoryRequest request);
 
-    // ✅ UPDATE
-    Category updateCategory(Long id, Category category);
+    CategoryResponse updateCategory(Long id, CategoryRequest request);
 
-    // ✅ DELETE
     void deleteCategory(Long id);
 }

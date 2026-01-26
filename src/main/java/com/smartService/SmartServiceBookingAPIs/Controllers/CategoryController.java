@@ -1,39 +1,43 @@
 package com.smartService.SmartServiceBookingAPIs.Controllers;
 
-import com.smartService.SmartServiceBookingAPIs.Entity.Category;
+import com.smartService.SmartServiceBookingAPIs.DTO.request.CategoryRequest;
+import com.smartService.SmartServiceBookingAPIs.DTO.response.CategoryResponse;
+import com.smartService.SmartServiceBookingAPIs.DTO.response.PaginatedResponse;
 import com.smartService.SmartServiceBookingAPIs.Services.CategoryService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/categories")
+@RequiredArgsConstructor
 public class CategoryController {
 
     private final CategoryService categoryService;
 
-    public CategoryController(CategoryService categoryService) {
-        this.categoryService = categoryService;
-    }
-
     @PostMapping
-    public Category create(@RequestBody Category category) {
-        return categoryService.createCategory(category);
+    public CategoryResponse create(@RequestBody CategoryRequest request) {
+        return categoryService.createCategory(request);
     }
 
     @GetMapping
-    public List<Category> getAll() {
-        return categoryService.getAllCategories();
+    public PaginatedResponse<CategoryResponse> getAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        return categoryService.getAllCategories(page, size);
     }
 
     @GetMapping("/{id}")
-    public Category getById(@PathVariable Long id) {
+    public CategoryResponse getById(@PathVariable Long id) {
         return categoryService.getCategoryById(id);
     }
 
     @PutMapping("/{id}")
-    public Category update(@PathVariable Long id, @RequestBody Category category) {
-        return categoryService.updateCategory(id, category);
+    public CategoryResponse update(
+            @PathVariable Long id,
+            @RequestBody CategoryRequest request
+    ) {
+        return categoryService.updateCategory(id, request);
     }
 
     @DeleteMapping("/{id}")
