@@ -226,7 +226,7 @@ public class AuthServiceImpl implements AuthService {
         // ============================
         // Extract authenticated user
         // ============================
-        User principal = (User) authentication.getPrincipal();
+        Users principal = (Users) authentication.getPrincipal();
 
         // Load your Users entity from DB
         Users user = userRepository.findByEmail(principal.getUsername())

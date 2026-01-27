@@ -1,5 +1,6 @@
 package com.smartService.SmartServiceBookingAPIs.Entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -46,17 +47,21 @@ public class Users implements UserDetails {
     )
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
+    @JsonManagedReference
     private Set<Roles> roles = new HashSet<>();
-//    public boolean hasRole(String roleName) {
-//        return roles != null &&
-//                roles.stream()
-//                        .anyMatch(role -> role.getName().equalsIgnoreCase(roleName));
-//    }
 
-    /* =========================
-       UserDetails overrides
-       ========================= */
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private Set<ProviderRequest> providerRequests = new HashSet<>();
 
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    // =========================
+    //  UserDetails overrides
+    // =========================
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles.stream()
