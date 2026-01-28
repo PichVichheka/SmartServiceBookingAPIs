@@ -14,6 +14,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static com.smartService.SmartServiceBookingAPIs.Exception.ErrorsExceptionFactory.badRequest;
+import static com.smartService.SmartServiceBookingAPIs.Exception.ErrorsExceptionFactory.notFound;
+
 @Service
 @RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
@@ -53,7 +56,7 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryResponse getCategoryById(Long id) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() ->
-                        new RuntimeException("Category not found with id: " + id));
+                        notFound("Category not found with id: " + id));
 
         return toResponse(category);
     }
@@ -61,7 +64,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryResponse createCategory(CategoryRequest request) {
         if (categoryRepository.existsByName(request.getName())) {
-            throw new RuntimeException("Category with this name already exists");
+            throw badRequest("Category with this name already exists");
         }
 
         Category category = new Category();
@@ -75,7 +78,7 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryResponse updateCategory(Long id, CategoryRequest request) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() ->
-                        new RuntimeException("Category not found with id: " + id));
+                        notFound("Category not found with id: " + id));
 
         category.setName(request.getName());
         category.setDescription(request.getDescription());
@@ -87,7 +90,7 @@ public class CategoryServiceImpl implements CategoryService {
     public void deleteCategory(Long id) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() ->
-                        new RuntimeException("Category not found with id: " + id));
+                        notFound("Category not found with id: " + id));
 
         categoryRepository.delete(category);
     }

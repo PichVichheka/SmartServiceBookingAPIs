@@ -47,12 +47,27 @@ public class SecurityConfig {
                         .accessDeniedHandler(jwtAccessDeniedHandler)
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/customer/request/**").hasRole("customer")
-                        .requestMatchers("/api/customer/get/**").hasRole("admin")
-//                                .requestMatchers("/api/customer/get/**").permitAll()
 
+                        // =========================
+                        // PUBLIC ENDPOINT
+                        // =========================
+                        .requestMatchers("/api/auth/**").permitAll()
+
+                        // =========================
+                        // PROTECTED ENDPOINT BY ROLE BASE AUTHORIZATION
+                        // =========================
+                        .requestMatchers("/api/customer/request/**").hasRole("customer")
+                        .requestMatchers("/api/admin/**").hasRole("admin")
+
+                        // =========================
+                        // PERMIT ALL FOR DEVELOPMENT (REMOVE THIS IN PRODUCTION)
+                        // =========================
                         .anyRequest().permitAll()
+
+                        // =========================
+                        // ALLOW ONLY AUTHENTICATED USER TO PERFORM OPERATION IN THE APP (ADD THIS IN PRODUCTION)
+                        // =========================
+//                        .anyRequest().authenticated()
                 )
                 .addFilterBefore(
                         jwtAuthFilter,

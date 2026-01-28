@@ -1,6 +1,7 @@
 package com.smartService.SmartServiceBookingAPIs.Entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+//import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -13,9 +14,10 @@ public class ProviderRequest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne  // ✅ Link to the user who made the request
+    @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    @JsonBackReference
+//    @JsonBackReference
+    @JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
     private Users user;
 
     @Column(name = "service_type")
@@ -27,7 +29,7 @@ public class ProviderRequest {
     @Column(name = "experience")
     private String experience;
 
-    @Enumerated(EnumType.STRING)  // ✅ Track request status
+    @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private RequestStatus status = RequestStatus.pending;
 }
