@@ -13,6 +13,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+
+import java.util.List;
 
 @Configuration
 @RequiredArgsConstructor
@@ -28,6 +31,14 @@ public class SecurityConfig {
 
         http
                 .csrf(AbstractHttpConfigurer::disable)
+                .cors(cors -> cors.configurationSource(request -> {
+                    CorsConfiguration config = new CorsConfiguration();
+                    config.setAllowedOrigins(List.of("*")); // "http://localhost:3000"
+                    config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                    config.setAllowedHeaders(List.of("*"));
+                    config.setAllowCredentials(true);
+                    return config;
+                }))
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
@@ -36,10 +47,26 @@ public class SecurityConfig {
                         .accessDeniedHandler(jwtAccessDeniedHandler)
                 )
                 .authorizeHttpRequests(auth -> auth
+
+                        // =========================
+                        // PUBLIC ENDPOINT
+                        // =========================
                         .requestMatchers("/api/auth/**").permitAll()
 
+                        // =========================
+                        // PROTECTED ENDPOINT BY ROLE BASE AUTHORIZATION
+                        // =========================
+                        .requestMatchers("/api/customer/request/**").hasRole("customer")
+                        .requestMatchers("/api/admin/**").hasRole("admin")
 
-                                .anyRequest().permitAll()
+                        // =========================
+                        // PERMIT ALL FOR DEVELOPMENT (REMOVE THIS IN PRODUCTION)
+                        // =========================
+                        .anyRequest().permitAll()
+
+                        // =========================
+                        // ALLOW ONLY AUTHENTICATED USER TO PERFORM OPERATION IN THE APP (ADD THIS IN PRODUCTION)
+                        // =========================
 //                        .anyRequest().authenticated()
                 )
                 .addFilterBefore(

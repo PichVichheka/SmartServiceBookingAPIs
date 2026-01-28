@@ -1,5 +1,6 @@
 package com.smartService.SmartServiceBookingAPIs.Entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,6 +25,7 @@ public class Roles {
     @ManyToMany(mappedBy = "roles")
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
+    @JsonBackReference
     private Set<Users> users = new HashSet<>();
 
     public Roles(String roleName) {
