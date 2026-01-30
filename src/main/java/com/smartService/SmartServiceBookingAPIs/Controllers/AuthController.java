@@ -2,6 +2,7 @@ package com.smartService.SmartServiceBookingAPIs.Controllers;
 
 import com.smartService.SmartServiceBookingAPIs.DTO.request.AuthRequest;
 import com.smartService.SmartServiceBookingAPIs.DTO.request.RegisterRequest;
+import com.smartService.SmartServiceBookingAPIs.DTO.response.ApiResponse;
 import com.smartService.SmartServiceBookingAPIs.DTO.response.AuthResponse;
 import com.smartService.SmartServiceBookingAPIs.DTO.response.RefreshTokenResponse;
 import com.smartService.SmartServiceBookingAPIs.Services.AuthService;
@@ -21,6 +22,17 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final AuthService authService;
+
+    @PostMapping("/refresh")
+    public ResponseEntity<RefreshTokenResponse> refreshToken(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) {
+        RefreshTokenResponse refreshTokenResponse =
+                authService.refreshToken(request, response);
+
+        return ResponseEntity.ok(refreshTokenResponse);
+    }
 
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(
@@ -48,14 +60,8 @@ public class AuthController {
         return ResponseEntity.ok(authResponse);
     }
 
-    @PostMapping("/refresh")
-    public ResponseEntity<RefreshTokenResponse> refreshToken(
-            HttpServletRequest request,
-            HttpServletResponse response
-    ) {
-        RefreshTokenResponse refreshTokenResponse =
-                authService.refreshToken(request, response);
-
-        return ResponseEntity.ok(refreshTokenResponse);
+    @PostMapping("/logout")
+    public ApiResponse<Object> logout(HttpServletRequest request, HttpServletResponse response) {
+        return authService.logout(request, response);
     }
 }

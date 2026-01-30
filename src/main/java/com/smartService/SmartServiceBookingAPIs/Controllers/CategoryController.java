@@ -17,17 +17,6 @@ public class CategoryController {
 
     private final CategoryService categoryService;
 
-    @PostMapping
-    public ResponseEntity<ApiResponse<CategoryResponse>> create(@RequestBody CategoryRequest request) {
-        CategoryResponse category = categoryService.createCategory(request);
-        ApiResponse<CategoryResponse> response = new ApiResponse<>(
-                true,
-                "Category created successfully",
-                category
-        );
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
-
     @GetMapping
     public ResponseEntity<ApiResponse<PaginatedResponse<CategoryResponse>>> getAll(
             @RequestParam(defaultValue = "0") int page,
@@ -51,6 +40,17 @@ public class CategoryController {
                 category
         );
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping
+    public ResponseEntity<ApiResponse<CategoryResponse>> create(@RequestBody CategoryRequest request) {
+        CategoryResponse category = categoryService.createCategory(request);
+        ApiResponse<CategoryResponse> response = new ApiResponse<>(
+                true,
+                "Category created successfully",
+                category
+        );
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PutMapping("/{id}")

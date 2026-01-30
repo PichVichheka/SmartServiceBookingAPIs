@@ -58,7 +58,9 @@ public class SecurityConfig {
                         // PROTECTED ENDPOINT BY ROLE BASE AUTHORIZATION
                         // =========================
                         .requestMatchers("/api/customer/request/**").hasRole("customer")
-                        .requestMatchers("/api/admin/**").hasRole("admin")
+//                        .requestMatchers("/api/admin/**").hasRole("admin")
+                                .requestMatchers("/api/admin/**").permitAll()
+//                                .requestMatchers("/api/services/**").hasRole("provider")
 
                         // =========================
                         // PERMIT ALL FOR DEVELOPMENT (REMOVE THIS IN PRODUCTION)

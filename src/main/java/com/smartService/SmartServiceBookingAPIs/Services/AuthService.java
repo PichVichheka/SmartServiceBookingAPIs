@@ -2,6 +2,7 @@ package com.smartService.SmartServiceBookingAPIs.Services;
 
 import com.smartService.SmartServiceBookingAPIs.DTO.request.AuthRequest;
 import com.smartService.SmartServiceBookingAPIs.DTO.request.RegisterRequest;
+import com.smartService.SmartServiceBookingAPIs.DTO.response.ApiResponse;
 import com.smartService.SmartServiceBookingAPIs.DTO.response.AuthResponse;
 import com.smartService.SmartServiceBookingAPIs.DTO.response.RefreshTokenResponse;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,4 +24,6 @@ public interface AuthService {
             AuthRequest request,
             HttpServletResponse response
     );
+
+    ApiResponse<Object> logout(HttpServletRequest request, HttpServletResponse response);
 }
