@@ -13,17 +13,16 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/services")
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class ServiceController {
 
     private final ServiceService serviceService;
 
-
-    @GetMapping
+    @GetMapping("/admin/services")
     public ResponseEntity<ApiResponse<PaginatedResponse<ServiceResponse>>> getAllServices(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "0") int size
+            @RequestParam(defaultValue = "10") int size
     ) {
         PaginatedResponse<ServiceResponse> servicesRes = serviceService.getAllServices(page, size);
         ApiResponse<PaginatedResponse<ServiceResponse>> response  = new ApiResponse<>(
@@ -36,7 +35,7 @@ public class ServiceController {
     }
 
 
-    @GetMapping("/{id}")
+    @GetMapping("/admin/services/{id}")
     public ResponseEntity<ApiResponse<ServiceResponse>> getService(@PathVariable Long id) {
         ServiceResponse servicesResId = serviceService.getServiceById(id);
         ApiResponse<ServiceResponse> responseId = new ApiResponse<>(
@@ -48,7 +47,7 @@ public class ServiceController {
         return ResponseEntity.ok(responseId);
     }
 
-    @PostMapping
+    @PostMapping("/services")
     public ResponseEntity<ServiceResponse> createService(
             @RequestBody ServiceCreateRequest request
     ) {
@@ -62,7 +61,7 @@ public class ServiceController {
         return ResponseEntity.status(HttpStatus.CREATED).body(postResponse.getData());
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/services/{id}")
     public ResponseEntity<ApiResponse<ServiceResponse>> updateService(
             @PathVariable Long id,
             @RequestBody ServiceCreateRequest request
@@ -77,7 +76,7 @@ public class ServiceController {
         return ResponseEntity.ok(responseUpdate);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/services/{id}")
     public ResponseEntity<Void> deleteService(@PathVariable Long id) {
 
         serviceService.deleteService(id);
