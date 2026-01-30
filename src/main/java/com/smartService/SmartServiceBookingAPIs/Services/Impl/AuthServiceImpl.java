@@ -2,6 +2,7 @@ package com.smartService.SmartServiceBookingAPIs.Services.Impl;
 
 import com.smartService.SmartServiceBookingAPIs.DTO.request.AuthRequest;
 import com.smartService.SmartServiceBookingAPIs.DTO.request.RegisterRequest;
+import com.smartService.SmartServiceBookingAPIs.DTO.response.ApiResponse;
 import com.smartService.SmartServiceBookingAPIs.DTO.response.AuthResponse;
 import com.smartService.SmartServiceBookingAPIs.DTO.response.RefreshTokenResponse;
 import com.smartService.SmartServiceBookingAPIs.DTO.response.UserResponse;
@@ -21,11 +22,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.security.core.userdetails.User;
 
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 import static com.smartService.SmartServiceBookingAPIs.Exception.ErrorsExceptionFactory.*;
@@ -278,5 +277,17 @@ public class AuthServiceImpl implements AuthService {
                 accessToken,
                 userResponse
         );
+    }
+
+    @Override
+    public ApiResponse<Object> logout(HttpServletRequest request, HttpServletResponse response) {
+
+        String access_token = cookieHelper.getCookieValue(request, "access_token");
+        String refresh_token = cookieHelper.getCookieValue(request, "refresh_token");
+
+        cookieHelper.clearAuthCookie(response, "access_token");
+        cookieHelper.clearAuthCookie(response, "refresh_token");
+
+        return new ApiResponse<>(true, "User logout successfully.");
     }
 }
