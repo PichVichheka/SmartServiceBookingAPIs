@@ -52,6 +52,7 @@ public class SecurityConfig {
                         // PUBLIC ENDPOINT
                         // =========================
                         .requestMatchers("/api/auth/**").permitAll()
+                                .requestMatchers("/api/services/**").permitAll()
 
                         // =========================
                         // PROTECTED ENDPOINT BY ROLE BASE AUTHORIZATION

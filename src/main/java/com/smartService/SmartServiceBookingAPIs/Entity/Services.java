@@ -14,11 +14,13 @@ import java.nio.file.FileStore;
 @Builder
 public class Services {
 
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "service_type", nullable = false)
+    @Column(name = "service_type")
     private String serviceType;
 
     @Column(name = "service_description")
@@ -27,14 +29,15 @@ public class Services {
     @Column(name = "service_offer")
     private String serviceOffer;
 
-    @Column(name = "price", nullable = false, precision = 10, scale = 2)
+    @Column(name = "price",precision = 10, scale = 2)
     private BigDecimal price;
 
-    @Column(name = "price_unit", nullable = false)
+    @Column(name = "price_unit")
     private String priceUnit;
 
     // FK → users.id
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "provider_id", nullable = false)
+
+    @ManyToOne
+    @JoinColumn(name = "provider_id")
     private Users provider;
 }
