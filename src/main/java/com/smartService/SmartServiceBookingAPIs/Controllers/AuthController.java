@@ -52,8 +52,12 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(
             @RequestBody AuthRequest request,
+//            HttpServletRequest httpRequest,
             HttpServletResponse response
     ) {
+
+//        String userAgent = httpRequest.getHeader("User_Agent");
+
         AuthResponse authResponse =
                 authService.login(request, response);
 
