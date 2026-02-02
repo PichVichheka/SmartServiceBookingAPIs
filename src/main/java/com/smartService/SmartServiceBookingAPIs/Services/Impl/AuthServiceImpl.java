@@ -2,26 +2,26 @@ package com.smartService.SmartServiceBookingAPIs.Services.Impl;
 
 import com.smartService.SmartServiceBookingAPIs.DTO.request.AuthRequest;
 import com.smartService.SmartServiceBookingAPIs.DTO.request.RegisterRequest;
-import com.smartService.SmartServiceBookingAPIs.DTO.response.ApiResponse;
-import com.smartService.SmartServiceBookingAPIs.DTO.response.AuthResponse;
-import com.smartService.SmartServiceBookingAPIs.DTO.response.RefreshTokenResponse;
-import com.smartService.SmartServiceBookingAPIs.DTO.response.UserResponse;
+import com.smartService.SmartServiceBookingAPIs.DTO.response.*;
 import com.smartService.SmartServiceBookingAPIs.Entity.Roles;
 import com.smartService.SmartServiceBookingAPIs.Entity.Users;
 import com.smartService.SmartServiceBookingAPIs.Repositories.RoleRepository;
 import com.smartService.SmartServiceBookingAPIs.Repositories.UserRepository;
 import com.smartService.SmartServiceBookingAPIs.Services.AuthService;
+import com.smartService.SmartServiceBookingAPIs.Services.DeviceTrackingService;
 import com.smartService.SmartServiceBookingAPIs.Services.Jwt.JwtService;
 import com.smartService.SmartServiceBookingAPIs.Utils.CookieHelper;
 import com.smartService.SmartServiceBookingAPIs.Utils.HelperFunction;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import ua_parser.Client;
 
 
 import java.util.List;
@@ -40,6 +40,10 @@ public class AuthServiceImpl implements AuthService {
     private final CookieHelper cookieHelper;
     private final AuthenticationManager authenticationManager;
     private final HelperFunction helperFunction;
+    private final DeviceTrackingService deviceTrackingService;
+
+    @Autowired
+    private HttpServletRequest httpRequest;
 
     @Override
     public RefreshTokenResponse refreshToken(HttpServletRequest request, HttpServletResponse response) {
@@ -230,6 +234,29 @@ public class AuthServiceImpl implements AuthService {
         // Load your Users entity from DB
         Users user = userRepository.findByEmail(principal.getUsername())
                 .orElseThrow(() -> validation("User not found after authentication."));
+
+        // ============================
+        // Track user device
+        // ============================
+        Client client = deviceTrackingService.trackLogin(user, httpRequest);
+
+        // ============================
+        // MAP Client → DeviceResponse (THIS IS WHAT YOU ASKED)
+        // ============================
+        DeviceResponse deviceResponse = new DeviceResponse();
+
+        if (client != null) {
+            deviceResponse.setBrowser(
+                    client.userAgent != null ? client.userAgent.family : "Unknown"
+            );
+            deviceResponse.setOs(
+                    client.os != null ? client.os.family : "Unknown"
+            );
+            deviceResponse.setDevice(
+                    client.device != null ? client.device.family : "Unknown"
+            );
+        }
+
 
         // ============================
         // Extract roles for JWT
