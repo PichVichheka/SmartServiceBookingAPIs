@@ -1,6 +1,7 @@
 package com.smartService.SmartServiceBookingAPIs.Services.Impl;
 
 import com.smartService.SmartServiceBookingAPIs.DTO.request.AuthRequest;
+import com.smartService.SmartServiceBookingAPIs.DTO.request.RegisterDeviceRequest;
 import com.smartService.SmartServiceBookingAPIs.DTO.request.RegisterRequest;
 import com.smartService.SmartServiceBookingAPIs.DTO.response.*;
 import com.smartService.SmartServiceBookingAPIs.Entity.Roles;
@@ -8,20 +9,22 @@ import com.smartService.SmartServiceBookingAPIs.Entity.Users;
 import com.smartService.SmartServiceBookingAPIs.Repositories.RoleRepository;
 import com.smartService.SmartServiceBookingAPIs.Repositories.UserRepository;
 import com.smartService.SmartServiceBookingAPIs.Services.AuthService;
-import com.smartService.SmartServiceBookingAPIs.Services.DeviceTrackingService;
+//import com.smartService.SmartServiceBookingAPIs.Services.DeviceTrackingService;
 import com.smartService.SmartServiceBookingAPIs.Services.Jwt.JwtService;
+import com.smartService.SmartServiceBookingAPIs.Services.UserDeviceService;
 import com.smartService.SmartServiceBookingAPIs.Utils.CookieHelper;
 import com.smartService.SmartServiceBookingAPIs.Utils.HelperFunction;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import ua_parser.Client;
+//import ua_parser.Client;
 
 
 import java.util.List;
@@ -29,6 +32,7 @@ import java.util.Set;
 
 import static com.smartService.SmartServiceBookingAPIs.Exception.ErrorsExceptionFactory.*;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class AuthServiceImpl implements AuthService {
@@ -40,7 +44,9 @@ public class AuthServiceImpl implements AuthService {
     private final CookieHelper cookieHelper;
     private final AuthenticationManager authenticationManager;
     private final HelperFunction helperFunction;
-    private final DeviceTrackingService deviceTrackingService;
+//    private final DeviceTrackingService deviceTrackingService;
+    private final UserDeviceService userDeviceService;
+    private final HttpServletRequest httpServletRequest;
 
     @Autowired
     private HttpServletRequest httpRequest;
@@ -238,23 +244,44 @@ public class AuthServiceImpl implements AuthService {
         // ============================
         // Track user device
         // ============================
-        Client client = deviceTrackingService.trackLogin(user, httpRequest);
+//        Client client = deviceTrackingService.trackLogin(user, httpRequest);
 
         // ============================
         // MAP Client → DeviceResponse (THIS IS WHAT YOU ASKED)
         // ============================
-        DeviceResponse deviceResponse = new DeviceResponse();
+//        UserDeviceResponse deviceResponse = new UserDeviceResponse();
 
-        if (client != null) {
-            deviceResponse.setBrowser(
-                    client.userAgent != null ? client.userAgent.family : "Unknown"
+//        if (client != null) {
+//            deviceResponse.setBrowser(
+//                    client.userAgent != null ? client.userAgent.family : "Unknown"
+//            );
+//            deviceResponse.setOs(
+//                    client.os != null ? client.os.family : "Unknown"
+//            );
+//            deviceResponse.setDeviceName(
+//                    client.device != null ? client.device.family : "Unknown"
+//            );
+//        }
+
+        // ============================
+        // Register user device (MANAGEMENT ONLY)
+        // ============================
+        RegisterDeviceRequest deviceRequest = new RegisterDeviceRequest(
+                request.getDeviceId(),
+                request.getDeviceType(),
+                request.getOs(),
+                request.getBrowser()
+        );
+
+        try {
+            userDeviceService.registerDevice(
+                    user,
+                    deviceRequest,
+                    httpServletRequest.getRemoteAddr()
             );
-            deviceResponse.setOs(
-                    client.os != null ? client.os.family : "Unknown"
-            );
-            deviceResponse.setDevice(
-                    client.device != null ? client.device.family : "Unknown"
-            );
+        } catch (Exception e) {
+            // IMPORTANT: device registration must NOT block login
+            log.warn("Failed to register device for user {}: {}", user.getId(), e.getMessage());
         }
 
 

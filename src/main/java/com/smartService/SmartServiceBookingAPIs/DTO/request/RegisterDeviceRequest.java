@@ -1,20 +1,13 @@
 package com.smartService.SmartServiceBookingAPIs.DTO.request;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
-//import lombok.RequiredArgsConstructor;
 
 @Data
-//@RequiredArgsConstructor
-public class AuthRequest {
-    private String email;
-    private String password;
-
-    // device info
+@AllArgsConstructor
+public class RegisterDeviceRequest {
     private String deviceId;
     private String deviceType;
     private String os;
     private String browser;
 }
-
-
-

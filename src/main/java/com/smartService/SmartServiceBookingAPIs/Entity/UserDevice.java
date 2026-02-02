@@ -3,12 +3,21 @@ package com.smartService.SmartServiceBookingAPIs.Entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
 @Entity
-@Table(name = "user_device")
+@Table(
+        name = "user_devices",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"user_id", "device_id"})
+        },
+        indexes = {
+                @Index(name = "idx_user_device_user", columnList = "user_id")
+        }
+)
 public class UserDevice {
 
     @Id
@@ -16,7 +25,7 @@ public class UserDevice {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "userId")
+    @JoinColumn(name = "user_id")
     private Users user;
 
     @Column(nullable = false, name = "device_id")
@@ -24,9 +33,12 @@ public class UserDevice {
 
     private String browser;
     private String os;
-    private String device;
+    private String deviceType;
 
     private String ipAddress;
-    private LocalDateTime lastLogin;
+
+    private Instant firstSeenAt;
+    private Instant lastSeenAt;
+
     private boolean active = true;
 }

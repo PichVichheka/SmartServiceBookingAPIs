@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ua_parser.Client;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Service
 @RequiredArgsConstructor
@@ -37,7 +37,7 @@ public class DeviceTrackingServiceImpl implements DeviceTrackingService {
         String deviceId = DeviceUtil.generateDeviceId(request);
 
         UserDevice userDevice = userDeviceRepository
-                .findByDeviceIdAndUserId(deviceId, user.getId())
+                .findByUserIdAndDeviceId(user.getId(), deviceId)
                 .orElseGet(() -> {
                     UserDevice device = new UserDevice();
                     device.setUser(user);
@@ -52,12 +52,12 @@ public class DeviceTrackingServiceImpl implements DeviceTrackingService {
         userDevice.setOs(
                 client.os != null ? client.os.family : "Unknown"
         );
-        userDevice.setDevice(
+        userDevice.setDeviceType(
                 client.device != null ? client.device.family : "Unknown"
         );
 
         userDevice.setIpAddress(ip);
-        userDevice.setLastLogin(LocalDateTime.now());
+        userDevice.setLastSeenAt(Instant.now());
         userDevice.setActive(true);
 
         userDeviceRepository.save(userDevice);

@@ -7,8 +7,10 @@ import lombok.Data;
 @Data
 //@RequiredArgsConstructor
 //@NoArgsConstructor
-public class DeviceResponse {
-    private String browser;
+public class UserDeviceResponse {
+    private Long id;
+    private String deviceName;
     private String os;
-    private String device;
+    private String browser;
+    private boolean active;
 }

@@ -26,5 +26,5 @@ public class UserResponse {
     private String phone;
     private List<String> roles;
 
-    private DeviceResponse currentDevice;
+    private UserDeviceResponse currentDevice;
 }
