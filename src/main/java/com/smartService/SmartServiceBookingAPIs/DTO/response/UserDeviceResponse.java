@@ -3,6 +3,8 @@ package com.smartService.SmartServiceBookingAPIs.DTO.response;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.time.Instant;
+
 //import java.time.Instant;
 //import lombok.NoArgsConstructor;
 //import lombok.RequiredArgsConstructor;
@@ -16,5 +18,6 @@ public class UserDeviceResponse {
     private String deviceName;
     private String os;
     private String browser;
+    private Instant lastSeenAt;
     private boolean active;
 }

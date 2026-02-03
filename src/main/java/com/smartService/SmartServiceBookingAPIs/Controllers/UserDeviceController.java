@@ -19,24 +19,21 @@ public class UserDeviceController {
 
     private final UserDeviceRepository userDeviceRepository;
 
-    private UserDeviceResponse toDeviceResponse(UserDevice userDevice) {
-        return new UserDeviceResponse(
-                userDevice.getId(),
-                userDevice.getDeviceType(),
-                userDevice.getOs(),
-                userDevice.getBrowser(),
-                userDevice.getLastSeenAt(),
-                userDevice.isActive()
-        );
-    }
-
-    @GetMapping
+    @GetMapping("/me/device")
     public List<UserDeviceResponse> myDevice(
             @AuthenticationPrincipal Users users
             ) {
         List<UserDevice> devices = userDeviceRepository.findAllByUserId(users.getId());
 
-        List<UserDeviceResponse> deviceResponses = devices.stream()
-                .map(this::)
+        return devices.stream()
+                .map(device -> new UserDeviceResponse(
+                        device.getId(),
+                        device.getDeviceType(),
+                        device.getOs(),
+                        device.getBrowser(),
+                        device.getLastSeenAt(),
+                        device.isActive()
+                ))
+                .toList();
     }
 }
