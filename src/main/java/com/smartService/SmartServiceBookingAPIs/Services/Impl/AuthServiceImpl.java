@@ -244,7 +244,7 @@ public class AuthServiceImpl implements AuthService {
         // ============================
         // Track user device
         // ============================
-//        Client client = deviceTrackingService.trackLogin(user, httpRequest);
+//        Client client = deviceTrackingServicve.trackLogin(user, httpRequest);
 
         // ============================
         // MAP Client → DeviceResponse (THIS IS WHAT YOU ASKED)

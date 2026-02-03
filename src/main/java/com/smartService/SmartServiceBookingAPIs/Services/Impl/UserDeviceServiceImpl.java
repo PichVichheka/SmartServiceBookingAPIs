@@ -1,6 +1,7 @@
 package com.smartService.SmartServiceBookingAPIs.Services.Impl;
 
 import com.smartService.SmartServiceBookingAPIs.DTO.request.RegisterDeviceRequest;
+import com.smartService.SmartServiceBookingAPIs.DTO.response.UserDeviceResponse;
 import com.smartService.SmartServiceBookingAPIs.Entity.UserDevice;
 import com.smartService.SmartServiceBookingAPIs.Entity.Users;
 import com.smartService.SmartServiceBookingAPIs.Repositories.UserDeviceRepository;
