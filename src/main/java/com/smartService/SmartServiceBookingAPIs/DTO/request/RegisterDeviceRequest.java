@@ -8,6 +8,7 @@ import lombok.Data;
 public class RegisterDeviceRequest {
     private String deviceId;
     private String deviceType;
+    private String deviceName;
     private String os;
     private String browser;
 }

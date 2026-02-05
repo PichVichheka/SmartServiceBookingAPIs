@@ -15,6 +15,7 @@ import java.time.Instant;
 @AllArgsConstructor
 public class UserDeviceResponse {
     private Long id;
+    private String deviceType;
     private String deviceName;
     private String os;
     private String browser;

@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -22,32 +23,62 @@ public class UserDeviceServiceImpl implements UserDeviceService {
 
 
     @Override
-    public UserDevice registerDevice(
+    public UserDeviceResponse registerDevice(
             Users users,
             RegisterDeviceRequest request,
-            String ipAddress) {
-        Optional<UserDevice> existDevice = userDeviceRepository
-                .findByUserIdAndDeviceId(users.getId(), request.getDeviceId());
+            String ipAddress
+    ) {
+        Optional<UserDevice> existDevice =
+                userDeviceRepository.findByUserIdAndDeviceId(
+                        users.getId(), request.getDeviceId()
+                );
+
+        UserDevice device;
 
         if (existDevice.isPresent()) {
-            UserDevice device = existDevice.get();
+            device = existDevice.get();
             device.setLastSeenAt(Instant.now());
             device.setIpAddress(ipAddress);
+        } else {
+            Instant now = Instant.now();
+            device = new UserDevice();
+            device.setUser(users);
+            device.setDeviceId(request.getDeviceId());
+            device.setDeviceType(request.getDeviceType());
+            device.setOs(request.getOs());
+            device.setBrowser(request.getBrowser());
+            device.setIpAddress(ipAddress);
+            device.setFirstSeenAt(now);
+            device.setLastSeenAt(now);
 
-            return device;
+            userDeviceRepository.save(device);
         }
 
-        Instant now = Instant.now();
-        UserDevice newDevice = new UserDevice();
-        newDevice.setUser(users);
-        newDevice.setDeviceId(request.getDeviceId());
-        newDevice.setDeviceType(request.getDeviceType());
-        newDevice.setOs(request.getOs());
-        newDevice.setBrowser(request.getBrowser());
-        newDevice.setIpAddress(ipAddress);
-        newDevice.setFirstSeenAt(now);
-        newDevice.setLastSeenAt(now);
-
-        return userDeviceRepository.save(newDevice);
+        return new UserDeviceResponse(
+                device.getId(),
+                device.getDeviceType(),
+                device.getDeviceName(),
+                device.getOs(),
+                device.getBrowser(),
+                device.getLastSeenAt(),
+                device.isActive()
+        );
     }
+
+    @Override
+    public List<UserDeviceResponse> getMyDevices(Users users) {
+        return userDeviceRepository.findAllByUserId(users.getId())
+                .stream()
+                .map(device -> new UserDeviceResponse(
+                        device.getId(),
+                        device.getDeviceType(),   // system category
+                        device.getDeviceName(),   // UI name
+                        device.getOs(),
+                        device.getBrowser(),
+                        device.getLastSeenAt(),
+                        device.isActive()
+                ))
+                .toList();
+    }
+
 }

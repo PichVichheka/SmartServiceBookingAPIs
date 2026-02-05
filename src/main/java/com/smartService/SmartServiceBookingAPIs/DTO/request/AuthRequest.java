@@ -8,12 +8,6 @@ import lombok.Data;
 public class AuthRequest {
     private String email;
     private String password;
-
-    // device info
-    private String deviceId;
-    private String deviceType;
-    private String os;
-    private String browser;
 }
 
 

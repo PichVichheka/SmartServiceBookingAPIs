@@ -1,14 +1,13 @@
 package com.smartService.SmartServiceBookingAPIs.Controllers;
 
+import com.smartService.SmartServiceBookingAPIs.DTO.request.RegisterDeviceRequest;
 import com.smartService.SmartServiceBookingAPIs.DTO.response.UserDeviceResponse;
-import com.smartService.SmartServiceBookingAPIs.Entity.UserDevice;
 import com.smartService.SmartServiceBookingAPIs.Entity.Users;
-import com.smartService.SmartServiceBookingAPIs.Repositories.UserDeviceRepository;
+import com.smartService.SmartServiceBookingAPIs.Services.UserDeviceService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -17,23 +16,27 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserDeviceController {
 
-    private final UserDeviceRepository userDeviceRepository;
+    private final UserDeviceService userDeviceService;
+
+    @PostMapping("/me/device")
+    public UserDeviceResponse registerDevice(
+            @AuthenticationPrincipal Users users,
+            @RequestBody RegisterDeviceRequest request,
+            HttpServletRequest httpRequest
+    ) {
+        String ipAddress = httpRequest.getRemoteAddr();
+
+        return userDeviceService.registerDevice(
+                users,
+                request,
+                ipAddress
+        );
+    }
 
     @GetMapping("/me/device")
     public List<UserDeviceResponse> myDevice(
             @AuthenticationPrincipal Users users
-            ) {
-        List<UserDevice> devices = userDeviceRepository.findAllByUserId(users.getId());
-
-        return devices.stream()
-                .map(device -> new UserDeviceResponse(
-                        device.getId(),
-                        device.getDeviceType(),
-                        device.getOs(),
-                        device.getBrowser(),
-                        device.getLastSeenAt(),
-                        device.isActive()
-                ))
-                .toList();
+    ) {
+        return userDeviceService.getMyDevices(users);
     }
 }

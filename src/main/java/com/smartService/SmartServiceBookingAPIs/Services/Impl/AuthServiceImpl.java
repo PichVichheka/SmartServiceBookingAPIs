@@ -242,47 +242,8 @@ public class AuthServiceImpl implements AuthService {
                 .orElseThrow(() -> validation("User not found after authentication."));
 
         // ============================
-        // Track user device
+        // Track user device (Add later)
         // ============================
-//        Client client = deviceTrackingServicve.trackLogin(user, httpRequest);
-
-        // ============================
-        // MAP Client → DeviceResponse (THIS IS WHAT YOU ASKED)
-        // ============================
-//        UserDeviceResponse deviceResponse = new UserDeviceResponse();
-
-//        if (client != null) {
-//            deviceResponse.setBrowser(
-//                    client.userAgent != null ? client.userAgent.family : "Unknown"
-//            );
-//            deviceResponse.setOs(
-//                    client.os != null ? client.os.family : "Unknown"
-//            );
-//            deviceResponse.setDeviceName(
-//                    client.device != null ? client.device.family : "Unknown"
-//            );
-//        }
-
-        // ============================
-        // Register user device (MANAGEMENT ONLY)
-        // ============================
-        RegisterDeviceRequest deviceRequest = new RegisterDeviceRequest(
-                request.getDeviceId(),
-                request.getDeviceType(),
-                request.getOs(),
-                request.getBrowser()
-        );
-
-        try {
-            userDeviceService.registerDevice(
-                    user,
-                    deviceRequest,
-                    httpServletRequest.getRemoteAddr()
-            );
-        } catch (Exception e) {
-            // IMPORTANT: device registration must NOT block login
-            log.warn("Failed to register device for user {}: {}", user.getId(), e.getMessage());
-        }
 
 
         // ============================

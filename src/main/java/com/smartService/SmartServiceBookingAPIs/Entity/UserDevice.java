@@ -34,6 +34,7 @@ public class UserDevice {
     private String browser;
     private String os;
     private String deviceType;
+    private String deviceName;
 
     private String ipAddress;
 
