@@ -101,4 +101,9 @@ public class BookingServiceImpl implements BookingService {
                 .status(booking.getStatus())
                 .build();
     }
+
+    @Override
+    public List<BookingResponse> getAllBooking() {
+        return List.of();
+    }
 }
