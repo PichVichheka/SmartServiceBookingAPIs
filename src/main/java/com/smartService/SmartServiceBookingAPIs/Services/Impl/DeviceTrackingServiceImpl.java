@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import ua_parser.Client;
 
 import java.time.Instant;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -35,29 +36,40 @@ public class DeviceTrackingServiceImpl implements DeviceTrackingService {
         String userAgent = request.getHeader("User-Agent");
         Client client = deviceInfoService.parse(userAgent);
         String ip = extractIp(request);
-
         String deviceId = DeviceUtil.generateDeviceId(request);
-        String deviceType = client.device != null ? client.device.family : "Unknown";
-        String deviceName = client.device != null ? client.device.family : "Unknown";
-        String os = client.os != null ? client.userAgent.family : "Unknown";
-        String browser = client.userAgent != null ? client.userAgent.family : "Unknown";
 
-        boolean isNewDevice = false;
+        String deviceFamily =
+                client != null && client.device != null
+                        ? client.device.family
+                        : "Unknown";
 
-        UserDevice userDevice = userDeviceRepository
-                .findByUserIdAndDeviceId(users.getId(), deviceId)
-                .orElseGet(() -> {
-                    isNewDevice = true;
+        String os =
+                client != null && client.os != null
+                        ? client.os.family
+                        : "Unknown";
+
+        String browser =
+                client != null && client.userAgent != null
+                        ? client.userAgent.family
+                        : "Unknown";
+
+        Optional<UserDevice> existing =
+                userDeviceRepository.findByUserIdAndDeviceId(users.getId(), deviceId);
+
+        boolean isNewDevice = existing.isEmpty();
+
+        UserDevice userDevice = existing.orElseGet(() -> {
                     UserDevice d = new UserDevice();
 
                     d.setUser(users);
                     d.setDeviceId(deviceId);
-                    d.setDeviceName(deviceName);
-                    d.setDeviceType(deviceType);
+                    d.setDeviceName(deviceFamily);
+                    d.setDeviceType(deviceFamily);
                     d.setOs(os);
                     d.setBrowser(browser);
                     d.setIpAddress(ip);
                     d.setFirstSeenAt(Instant.now());
+
                     return d;
                 });
 

@@ -26,22 +26,6 @@ public class ProviderAvailabilityServiceImpl implements ProviderAvailabilityServ
     private final ProviderAvailabilityRepository availabilityRepository;
     private final UserRepository userRepository;
 
-    @Override
-    public void createAvailability(AvailabilityRequest request) {
-        Users provider = userRepository.findById(request.getProviderId())
-                .orElseThrow(() -> notFound("provider not found"));
-
-        ProviderAvailability availability = new ProviderAvailability();
-        availability.setProvider(provider);
-        availability.setAvailableDate(request.getDate());
-        availability.setStartTime(request.getStartTime());
-        availability.setEndTime(request.getEndTime());
-        availability.setAvailable(true);
-
-        availabilityRepository.save(availability);
-
-
-    }
 
     @Override
     public PaginatedResponse<AvailabilityResponse> getAllAvailability(int page, int size) {
@@ -76,25 +60,80 @@ public class ProviderAvailabilityServiceImpl implements ProviderAvailabilityServ
         return new PaginatedResponse<>(data, paginationMeta);
     }
 
-
     @Override
     public AvailabilityResponse getAvailabilityById(Long id) {
-        return null;
+        ProviderAvailability availability = availabilityRepository.findById(id)
+                .orElseThrow(() -> notFound("Availability not found."));
+
+        AvailabilityResponse response = new AvailabilityResponse();
+        response.setId(availability.getId());
+        response.setProviderId(availability.getProvider().getId());
+        response.setDate(availability.getAvailableDate());
+        response.setStartTime(availability.getStartTime());
+        response.setEndTime(availability.getEndTime());
+        response.setAvailable(availability.isAvailable());
+
+        return response;
+    }
+
+    @Override
+    public AvailabilityResponse createAvailability(AvailabilityRequest request) {
+        Users provider = userRepository.findById(request.getProviderId())
+                .orElseThrow(() -> notFound("provider not found"));
+
+        ProviderAvailability availability = new ProviderAvailability();
+        availability.setProvider(provider);
+        availability.setAvailableDate(request.getDate());
+        availability.setStartTime(request.getStartTime());
+        availability.setEndTime(request.getEndTime());
+        availability.setAvailable(true);
+
+        availabilityRepository.save(availability);
+
+        AvailabilityResponse response = new AvailabilityResponse();
+        response.setId(availability.getId());
+        response.setProviderId(provider.getId());
+        response.setDate(availability.getAvailableDate());
+        response.setStartTime(availability.getStartTime());
+        response.setEndTime(availability.getEndTime());
+        response.setAvailable(availability.isAvailable());
+
+        return response;
     }
 
     @Override
     public AvailabilityResponse updateAvailability(Long id, AvailabilityRequest request) {
-        return null;
-    }
+        ProviderAvailability availability = availabilityRepository.findById(id)
+                .orElseThrow(() -> notFound("Availability not found."));
 
-    @Override
-    public AvailabilityResponse updateAvailability(Long id, AvailabilityResponse request) {
-        return null;
+        if (request.getProviderId() != null) {
+            Users provider = userRepository.findById(request.getProviderId())
+                    .orElseThrow(() -> notFound("provider not found"));
+            availability.setProvider(provider);
+        }
+
+        availability.setAvailableDate(request.getDate());
+        availability.setStartTime(request.getStartTime());
+        availability.setEndTime(request.getEndTime());
+
+        availabilityRepository.save(availability);
+
+        AvailabilityResponse response = new AvailabilityResponse();
+        response.setId(availability.getId());
+        response.setProviderId(availability.getProvider().getId());
+        response.setDate(availability.getAvailableDate());
+        response.setStartTime(availability.getStartTime());
+        response.setEndTime(availability.getEndTime());
+        response.setAvailable(availability.isAvailable());
+
+        return response;
     }
 
     @Override
     public void deleteAvailability(Long id) {
+        ProviderAvailability availability = availabilityRepository.findById(id)
+                .orElseThrow(() -> notFound("Availability not found."));
 
+        availabilityRepository.delete(availability);
     }
-
 }

@@ -13,13 +13,16 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public void sendNewDeviceAlert(Users users, UserDevice userDevice) {
 
-        log.warn(
-                "New Device Login detected | userId={} | deviceId={} | browser={} | ip={}",
-                users.getId(),
-                userDevice.getDeviceName(),
-                userDevice.getOs(),
-                userDevice.getBrowser(),
-                userDevice.getIpAddress()
+//        log.warn(
+//                "New Device Login detected | userId={} | deviceId={} | browser={} | ip={}",
+//                users.getId(),
+//                userDevice.getDeviceName(),
+//                userDevice.getOs(),
+//                userDevice.getBrowser(),
+//                userDevice.getIpAddress()
+//        );
+        System.out.println(
+                "⚠️ New device login for user: " + users.getEmail()
         );
     }
 }

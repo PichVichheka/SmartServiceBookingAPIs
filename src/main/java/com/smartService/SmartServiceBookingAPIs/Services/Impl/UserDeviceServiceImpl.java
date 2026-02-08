@@ -45,6 +45,7 @@ public class UserDeviceServiceImpl implements UserDeviceService {
             device.setUser(users);
             device.setDeviceId(request.getDeviceId());
             device.setDeviceType(request.getDeviceType());
+            device.setDeviceName(request.getDeviceName());
             device.setOs(request.getOs());
             device.setBrowser(request.getBrowser());
             device.setIpAddress(ipAddress);

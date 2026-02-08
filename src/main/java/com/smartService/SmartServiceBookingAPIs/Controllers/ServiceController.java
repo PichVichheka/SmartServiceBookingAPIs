@@ -19,7 +19,7 @@ public class ServiceController {
 
     private final ServiceService serviceService;
 
-    @GetMapping("/admin/services")
+    @GetMapping("/public/services")
     public ResponseEntity<ApiResponse<PaginatedResponse<ServiceResponse>>> getAllServices(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
@@ -35,7 +35,7 @@ public class ServiceController {
     }
 
 
-    @GetMapping("/admin/services/{id}")
+    @GetMapping("/services/{id}")
     public ResponseEntity<ApiResponse<ServiceResponse>> getService(@PathVariable Long id) {
         ServiceResponse servicesResId = serviceService.getServiceById(id);
         ApiResponse<ServiceResponse> responseId = new ApiResponse<>(
