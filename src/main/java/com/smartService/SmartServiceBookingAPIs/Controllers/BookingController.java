@@ -1,6 +1,6 @@
 package com.smartService.SmartServiceBookingAPIs.Controllers;
 
-import com.smartService.SmartServiceBookingAPIs.DTO.request.BookingReqest;
+import com.smartService.SmartServiceBookingAPIs.DTO.request.BookingRequest;
 import com.smartService.SmartServiceBookingAPIs.DTO.response.ApiResponse;
 import com.smartService.SmartServiceBookingAPIs.DTO.response.BookingResponse;
 import com.smartService.SmartServiceBookingAPIs.DTO.response.PaginatedResponse;
@@ -16,7 +16,7 @@ public class BookingController {
     private final BookingService bookingService;
 
     @PostMapping("/customer/bookings")
-    public ApiResponse<BookingResponse> createBooking(@RequestBody BookingReqest request) {
+    public ApiResponse<BookingResponse> createBooking(@RequestBody BookingRequest request) {
         BookingResponse booking = bookingService.createBooking(request);
         return new ApiResponse<>(true, "Booking created successfully", booking);
     }

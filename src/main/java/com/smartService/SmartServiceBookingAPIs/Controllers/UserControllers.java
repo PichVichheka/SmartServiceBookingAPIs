@@ -18,10 +18,10 @@ public class UserControllers {
 
     @GetMapping
     public ApiResponse<?> getAllUsers(
-            @RequestParam(required = false) Integer page,
-            @RequestParam(required = false) Integer size
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
     ) {
-        PaginatedResponse<UserResponse> paginatedUsers = userService.getAll(page - 1, size);
+        PaginatedResponse<UserResponse> paginatedUsers = userService.getAll(page, size);
         return new ApiResponse<>(
                 true,
                 "Get users successfully.",

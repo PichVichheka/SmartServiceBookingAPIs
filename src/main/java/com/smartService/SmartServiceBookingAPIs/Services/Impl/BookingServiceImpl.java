@@ -1,6 +1,6 @@
 package com.smartService.SmartServiceBookingAPIs.Services.Impl;
 
-import com.smartService.SmartServiceBookingAPIs.DTO.request.BookingReqest;
+import com.smartService.SmartServiceBookingAPIs.DTO.request.BookingRequest;
 import com.smartService.SmartServiceBookingAPIs.DTO.response.BookingResponse;
 import com.smartService.SmartServiceBookingAPIs.DTO.response.PaginatedResponse;
 import com.smartService.SmartServiceBookingAPIs.Entity.Booking;
@@ -34,7 +34,7 @@ public class BookingServiceImpl implements BookingService {
 
 
     @Override
-    public BookingResponse createBooking(BookingReqest request) {
+    public BookingResponse createBooking(BookingRequest request) {
 
         Users users = userRepository.findById(request.getUserId())
                 .orElseThrow(() -> notFound("user not found"));
