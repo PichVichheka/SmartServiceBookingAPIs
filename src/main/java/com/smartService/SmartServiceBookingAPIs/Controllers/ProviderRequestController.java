@@ -3,7 +3,6 @@ package com.smartService.SmartServiceBookingAPIs.Controllers;
 import com.smartService.SmartServiceBookingAPIs.DTO.request.BecomeProviderRequest;
 import com.smartService.SmartServiceBookingAPIs.DTO.response.ApiResponse;
 import com.smartService.SmartServiceBookingAPIs.DTO.response.ProviderRequestResponse;
-import com.smartService.SmartServiceBookingAPIs.Entity.ProviderRequest;
 import com.smartService.SmartServiceBookingAPIs.Entity.Users;
 import com.smartService.SmartServiceBookingAPIs.Services.Jwt.JwtService;
 import com.smartService.SmartServiceBookingAPIs.Services.ProviderRequestService;
