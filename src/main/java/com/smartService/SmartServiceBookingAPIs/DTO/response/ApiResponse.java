@@ -1,11 +1,7 @@
 package com.smartService.SmartServiceBookingAPIs.DTO.response;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
-
-import javax.swing.plaf.ActionMapUIResource;
 
 @Data
 @RequiredArgsConstructor

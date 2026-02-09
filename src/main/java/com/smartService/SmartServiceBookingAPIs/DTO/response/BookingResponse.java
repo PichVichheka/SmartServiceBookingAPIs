@@ -1,13 +1,13 @@
 package com.smartService.SmartServiceBookingAPIs.DTO.response;
 
-import lombok.Builder;
+//import lombok.Builder;
 import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Data
-@Builder
+//@Builder
 public class BookingResponse {
 
     private Long id;

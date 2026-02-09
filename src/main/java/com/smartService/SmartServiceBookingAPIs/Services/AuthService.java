@@ -22,7 +22,7 @@ public interface AuthService {
 
     AuthResponse login(
             AuthRequest request,
-//            HttpServletRequest httpRequest,
+            HttpServletRequest httpRequest,
             HttpServletResponse response
     );
 

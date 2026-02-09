@@ -1,36 +1,40 @@
 package com.smartService.SmartServiceBookingAPIs.Controllers;
 
 import com.smartService.SmartServiceBookingAPIs.DTO.request.BookingReqest;
+import com.smartService.SmartServiceBookingAPIs.DTO.response.ApiResponse;
 import com.smartService.SmartServiceBookingAPIs.DTO.response.BookingResponse;
+import com.smartService.SmartServiceBookingAPIs.DTO.response.PaginatedResponse;
 import com.smartService.SmartServiceBookingAPIs.Services.BookingService;
-import jakarta.persistence.Id;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
-
 @RestController
-@RequestMapping("/api/bookings")
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class BookingController {
 
     private final BookingService bookingService;
 
-    // ✅ THIS IS VERY IMPORTANT
-    @PostMapping
-    public BookingResponse createBooking(@RequestBody BookingReqest request) {
-        return bookingService.createBooking(request);
+    @PostMapping("/customer/bookings")
+    public ApiResponse<BookingResponse> createBooking(@RequestBody BookingReqest request) {
+        BookingResponse booking = bookingService.createBooking(request);
+        return new ApiResponse<>(true, "Booking created successfully", booking);
     }
 
-    @GetMapping
-    public List<BookingResponse> getAllBooking() {
-        return bookingService.getAllBooking();
+    @GetMapping("/provider/bookings")
+    public ApiResponse<PaginatedResponse<BookingResponse>> getAllBooking(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        PaginatedResponse<BookingResponse> bookings =
+                bookingService.getAllBooking(page, size);
+
+        return new ApiResponse<>(true, "Bookings fetched successfully", bookings);
     }
 
-    @GetMapping("/{id}")
-    public BookingResponse getBookingById(@PathVariable Long id) {
-        return bookingService.getBookingById(id);
+    @GetMapping("/provider/bookings/{id}")
+    public ApiResponse<BookingResponse> getBookingById(@PathVariable Long id) {
+        BookingResponse booking = bookingService.getBookingById(id);
+        return new ApiResponse<>(true, "Booking fetched successfully", booking);
     }
 }
