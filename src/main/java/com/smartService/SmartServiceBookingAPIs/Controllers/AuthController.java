@@ -37,10 +37,11 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(
             @RequestBody RegisterRequest request,
+            HttpServletRequest httpRequest,
             HttpServletResponse response
     ) {
         AuthResponse authResponse =
-                authService.register(request, response);
+                authService.register(request, httpRequest, response);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)

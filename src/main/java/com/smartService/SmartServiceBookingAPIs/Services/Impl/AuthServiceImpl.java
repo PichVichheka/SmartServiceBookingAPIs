@@ -238,8 +238,7 @@ public class AuthServiceImpl implements AuthService {
         // ============================
         // Track device login
         // ============================
-//        UserDeviceResponse deviceResponse =
-                deviceTrackingService.trackUserDevice(user, httpRequest);
+        deviceTrackingService.trackUserDevice(user, httpRequest);
 
         // ============================
         // Extract roles for JWT
