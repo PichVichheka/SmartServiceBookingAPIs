@@ -117,7 +117,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public AuthResponse register(RegisterRequest request, HttpServletResponse response) {
+    public AuthResponse register(RegisterRequest request, HttpServletRequest httpRequest, HttpServletResponse response) {
 
         // ============================
         // Validate input fields
@@ -145,6 +145,11 @@ public class AuthServiceImpl implements AuthService {
         // Save user to DB
         // ============================
         Users savedUser = userRepository.save(user);
+
+        // ============================
+        // Track device (AUTO-LOGIN)
+        // ============================
+        deviceTrackingService.trackUserDevice(savedUser, httpRequest);
 
         // ============================
         // Extract role names for JWT

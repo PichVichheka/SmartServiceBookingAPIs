@@ -17,6 +17,7 @@ public interface AuthService {
 
     AuthResponse register(
             RegisterRequest request,
+            HttpServletRequest httpRequest,
             HttpServletResponse response
     );
 
